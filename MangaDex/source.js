@@ -570,7 +570,7 @@ exports.MangaDexInfo = {
     description: 'Extension that pulls manga from MangaDex',
     icon: 'icon.png',
     name: 'MangaDex',
-    version: '1.0.5',
+    version: '1.1.0',
     authorWebsite: 'https://github.com/nar1n',
     websiteBaseURL: MANGADEX_DOMAIN,
     hentaiSource: false,
@@ -580,10 +580,6 @@ exports.MangaDexInfo = {
             text: 'Recommended',
             type: paperback_extensions_common_1.TagType.BLUE,
         },
-        {
-            text: "Notifications",
-            type: paperback_extensions_common_1.TagType.GREEN
-        }
     ],
 };
 class MangaDex extends paperback_extensions_common_1.Source {
@@ -603,31 +599,31 @@ class MangaDex extends paperback_extensions_common_1.Source {
             'vi': 'vn',
             'hu': 'hu',
             'zh': 'cn',
-            // 'ar': '', // Arabic
+            'ar': 'sa',
             'de': 'de',
             'zh-hk': 'hk',
-            // 'ca': '', // Catalan
+            'ca': 'es',
             'th': 'th',
             'bg': 'bg',
-            // 'fa': '', // Faroese
+            'fa': 'ir',
             'uk': 'ua',
             'mn': 'mn',
-            // 'he': '', // Hebrew
+            'he': 'il',
             'ro': 'ro',
             'ms': 'my',
-            // 'tl': '', // Tagalog
+            'tl': 'ph',
             'ja': 'jp',
             'ko': 'kr',
-            // 'hi': '', // Hindi
-            // 'my': '', // Malaysian
+            'hi': 'in',
+            'my': 'my',
             'cs': 'cz',
             'pt': 'pt',
             'nl': 'nl',
-            // 'sv': '', // Swedish
-            // 'bn': '', // Bengali
+            'sv': 'se',
+            'bn': 'bd',
             'no': 'no',
             'lt': 'lt',
-            // 'sr': '', // Serbian
+            'sr': 'rs',
             'da': 'dk',
             'fi': 'fi',
         };
@@ -641,10 +637,10 @@ class MangaDex extends paperback_extensions_common_1.Source {
     }
     globalRequestHeaders() {
         return {
-            referer: MANGADEX_DOMAIN
+            referer: `${MANGADEX_DOMAIN}/`
         };
     }
-    getMangaUUIDs(numericIds, type = 'manga') {
+    getMangaUUIDs(numericIds) {
         return __awaiter(this, void 0, void 0, function* () {
             const length = numericIds.length;
             let offset = 0;
@@ -672,56 +668,6 @@ class MangaDex extends paperback_extensions_common_1.Source {
             return UUIDsDict;
         });
     }
-    getAuthors(authorIds) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let url = `${MANGADEX_API}/author/?limit=100`;
-            let index = 0;
-            for (const author of authorIds) {
-                url += `&ids[${index}]=${author}`;
-                index += 1;
-            }
-            const request = createRequestObject({
-                url,
-                method: 'GET',
-            });
-            const response = yield this.requestManager.schedule(request, 1);
-            const json = typeof response.data === "string" ? JSON.parse(response.data) : response.data;
-            let authorsDict = {};
-            for (const entry of json.results) {
-                authorsDict[entry.data.id] = entry.data.attributes.name;
-            }
-            return authorsDict;
-        });
-    }
-    getGroups(groupIds) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const length = groupIds.length;
-            let offset = 0;
-            let groupsDict = {};
-            while (true) {
-                let url = `${MANGADEX_API}/group/?limit=100&offset=${offset}`;
-                let index = 0;
-                for (const group of groupIds.slice(offset, offset + 100)) {
-                    url += `&ids[${index}]=${group}`;
-                    index += 1;
-                }
-                offset += 100;
-                const request = createRequestObject({
-                    url,
-                    method: 'GET',
-                });
-                const response = yield this.requestManager.schedule(request, 1);
-                const json = typeof response.data === "string" ? JSON.parse(response.data) : response.data;
-                for (const entry of json.results) {
-                    groupsDict[entry.data.id] = entry.data.attributes.name;
-                }
-                if (offset >= length) {
-                    break;
-                }
-            }
-            return groupsDict;
-        });
-    }
     getMDHNodeURL(chapterId) {
         return __awaiter(this, void 0, void 0, function* () {
             const request = createRequestObject({
@@ -733,25 +679,15 @@ class MangaDex extends paperback_extensions_common_1.Source {
             return json.baseUrl;
         });
     }
-    getCovers(coverIds) {
+    getCustomListRequestURL(listId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let coversDict = {};
-            let url = `${MANGADEX_API}/cover?limit=100`;
-            let index = 0;
-            for (const coverId of coverIds) {
-                url += `&ids[${index}]=${coverId}`;
-                index += 1;
-            }
             const request = createRequestObject({
-                url,
+                url: `${MANGADEX_API}/list/${listId}`,
                 method: 'GET',
             });
             const response = yield this.requestManager.schedule(request, 1);
             const json = typeof response.data === "string" ? JSON.parse(response.data) : response.data;
-            for (const entry of json.results) {
-                coversDict[entry.data.id] = entry.data.attributes.fileName;
-            }
-            return coversDict;
+            return `${MANGADEX_API}/manga?limit=100&contentRating[]=none&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic&includes[]=cover_art&ids[]=${json.relationships.filter((x) => x.type == 'manga').map((x) => x.id).join('&ids[]=')}`;
         });
     }
     getMangaDetails(mangaId) {
@@ -766,7 +702,7 @@ class MangaDex extends paperback_extensions_common_1.Source {
                 newMangaId = mangaId;
             }
             const request = createRequestObject({
-                url: `${MANGADEX_API}/manga/${newMangaId}`,
+                url: `${MANGADEX_API}/manga/${newMangaId}?includes[]=author&includes[]=artist&includes[]=cover_art`,
                 method: 'GET',
             });
             const response = yield this.requestManager.schedule(request, 1);
@@ -786,19 +722,12 @@ class MangaDex extends paperback_extensions_common_1.Source {
                     label: Object.keys(tagName).map(keys => tagName[keys])[0]
                 }));
             }
-            let author = json.relationships.filter((x) => x.type == 'author').map((x) => x.id);
-            let artist = json.relationships.filter((x) => x.type == 'artist').map((x) => x.id);
-            const authors = author.concat(artist);
-            if (authors.length != 0) {
-                const authorsDict = yield this.getAuthors(authors);
-                author = author.map((x) => this.decodeHTMLEntity(authorsDict[x])).join(', ');
-                artist = artist.map((x) => this.decodeHTMLEntity(authorsDict[x])).join(', ');
-            }
-            const coverId = json.relationships.filter((x) => x.type == 'cover_art').map((x) => x.id)[0];
+            const author = json.relationships.filter((x) => x.type == 'author').map((x) => x.attributes.name).join(', ');
+            const artist = json.relationships.filter((x) => x.type == 'artist').map((x) => x.attributes.name).join(', ');
+            const coverFileName = json.relationships.filter((x) => x.type == 'cover_art').map((x) => { var _a; return (_a = x.attributes) === null || _a === void 0 ? void 0 : _a.fileName; })[0];
             let image;
-            if (coverId) {
-                const coversDict = yield this.getCovers([coverId]);
-                image = `${COVER_BASE_URL}/${newMangaId}/${coversDict[coverId]}`;
+            if (coverFileName) {
+                image = `${COVER_BASE_URL}/${newMangaId}/${coverFileName}`;
             }
             else {
                 image = 'https://i.imgur.com/6TrIues.jpg';
@@ -831,12 +760,11 @@ class MangaDex extends paperback_extensions_common_1.Source {
             else {
                 newMangaId = mangaId;
             }
-            let chaptersUnparsed = [];
+            const chapters = [];
             let offset = 0;
-            let groupIds = [];
             while (true) {
                 const request = createRequestObject({
-                    url: `${MANGADEX_API}/manga/${newMangaId}/feed?limit=500&offset=${offset}`,
+                    url: `${MANGADEX_API}/manga/${newMangaId}/feed?limit=500&offset=${offset}&includes[]=scanlation_group`,
                     method: 'GET',
                 });
                 const response = yield this.requestManager.schedule(request, 1);
@@ -855,36 +783,25 @@ class MangaDex extends paperback_extensions_common_1.Source {
                         langCode = this.languageMapping[chapterDetails.translatedLanguage];
                     }
                     else {
-                        langCode = '_unkown';
+                        langCode = '_unknown';
                     }
                     const time = new Date(chapterDetails.publishAt);
-                    let groups = chapter.relationships.filter((x) => x.type == 'scanlation_group').map((x) => x.id);
-                    for (const groupId of groups) {
-                        if (!groupIds.includes(groupId)) {
-                            groupIds.push(groupId);
-                        }
-                    }
-                    chaptersUnparsed.push({
+                    const group = chapter.relationships.filter((x) => x.type == 'scanlation_group').map((x) => x.attributes.name).join(', ');
+                    chapters.push(createChapter({
                         id: chapterId,
                         mangaId: mangaId,
                         name,
                         chapNum,
                         volume,
                         langCode,
-                        groups,
+                        group,
                         time
-                    });
+                    }));
                 }
                 if (json.total <= offset) {
                     break;
                 }
             }
-            const groupDict = yield this.getGroups(groupIds);
-            const chapters = chaptersUnparsed.map((x) => {
-                x.group = x.groups.map((x) => this.decodeHTMLEntity(groupDict[x])).join(', ') + '';
-                delete x.groups;
-                return createChapter(x);
-            });
             return chapters;
         });
     }
@@ -917,7 +834,7 @@ class MangaDex extends paperback_extensions_common_1.Source {
             let offset = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.offset) !== null && _a !== void 0 ? _a : 0;
             let results = [];
             const request = createRequestObject({
-                url: `${MANGADEX_API}/manga?title=${encodeURIComponent((_b = query.title) !== null && _b !== void 0 ? _b : '')}&limit=100&offset=${offset}&contentRating[0]=none&contentRating[1]=safe&contentRating[2]=suggestive&contentRating[3]=erotica&contentRating[4]=pornographic`,
+                url: `${MANGADEX_API}/manga?title=${encodeURIComponent((_b = query.title) !== null && _b !== void 0 ? _b : '')}&limit=100&offset=${offset}&contentRating[]=none&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic&includes[]=cover_art`,
                 method: 'GET',
             });
             const response = yield this.requestManager.schedule(request, 1);
@@ -928,17 +845,18 @@ class MangaDex extends paperback_extensions_common_1.Source {
             if (json.results === undefined) {
                 throw new Error(`Failed to parse json for the given search`);
             }
-            const coverIds = json.results.map((x) => x.relationships.filter((x) => x.type == 'cover_art').map((x) => x.id)[0]).filter((x) => x != undefined);
-            let coversDict = {};
-            if (coverIds.length > 0) {
-                coversDict = yield this.getCovers(coverIds);
-            }
             for (const manga of json.results) {
                 const mangaId = manga.data.id;
                 const mangaDetails = manga.data.attributes;
                 const title = this.decodeHTMLEntity(mangaDetails.title[Object.keys(mangaDetails.title)[0]]);
-                const coverId = manga.relationships.filter((x) => x.type == 'cover_art').map((x) => x.id)[0];
-                const image = Object.keys(coversDict).includes(coverId) ? `${COVER_BASE_URL}/${mangaId}/${coversDict[coverId]}.256.jpg` : 'https://i.imgur.com/6TrIues.jpg';
+                const coverFileName = manga.relationships.filter((x) => x.type == 'cover_art').map((x) => { var _a; return (_a = x.attributes) === null || _a === void 0 ? void 0 : _a.fileName; })[0];
+                let image;
+                if (coverFileName) {
+                    image = `${COVER_BASE_URL}/${mangaId}/${coverFileName}.256.jpg`;
+                }
+                else {
+                    image = 'https://i.imgur.com/6TrIues.jpg';
+                }
                 results.push(createMangaTile({
                     id: mangaId,
                     title: createIconText({ text: title }),
@@ -956,7 +874,29 @@ class MangaDex extends paperback_extensions_common_1.Source {
             const sections = [
                 {
                     request: createRequestObject({
-                        url: `${MANGADEX_API}/manga?limit=20&contentRating[0]=none&contentRating[1]=safe&contentRating[2]=suggestive&contentRating[3]=erotica&contentRating[4]=pornographic`,
+                        url: yield this.getCustomListRequestURL('8018a70b-1492-4f91-a584-7451d7787f7a'),
+                        method: 'GET',
+                    }),
+                    section: createHomeSection({
+                        id: 'featured',
+                        title: 'FEATURED TITLES',
+                        view_more: true,
+                    }),
+                },
+                {
+                    request: createRequestObject({
+                        url: `${MANGADEX_API}/manga?limit=20&contentRating[]=none&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic&includes[]=cover_art`,
+                        method: 'GET',
+                    }),
+                    section: createHomeSection({
+                        id: 'popular',
+                        title: 'POPULAR TITLES',
+                        view_more: true,
+                    }),
+                },
+                {
+                    request: createRequestObject({
+                        url: `${MANGADEX_API}/manga?limit=20&contentRating[]=none&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic&includes[]=cover_art&order[updatedAt]=desc`,
                         method: 'GET',
                     }),
                     section: createHomeSection({
@@ -965,28 +905,6 @@ class MangaDex extends paperback_extensions_common_1.Source {
                         view_more: true,
                     }),
                 },
-                {
-                    request: createRequestObject({
-                        url: `${MANGADEX_API}/manga?limit=20&publicationDemographic[0]=shounen&contentRating[0]=none&contentRating[1]=safe&contentRating[2]=suggestive&contentRating[3]=erotica&contentRating[4]=pornographic`,
-                        method: 'GET',
-                    }),
-                    section: createHomeSection({
-                        id: 'shounen',
-                        title: 'UPDATED SHOUNEN TITLES',
-                        view_more: true,
-                    }),
-                },
-                {
-                    request: createRequestObject({
-                        url: `${MANGADEX_API}/manga?limit=20&includedTags[0]=391b0423-d847-456f-aff0-8b0cfc03066b&contentRating[0]=none&contentRating[1]=safe&contentRating[2]=suggestive&contentRating[3]=erotica&contentRating[4]=pornographic`,
-                        method: 'GET',
-                    }),
-                    section: createHomeSection({
-                        id: 'action',
-                        title: 'UPDATED ACTION TITLES',
-                        view_more: true,
-                    }),
-                }
             ];
             const promises = [];
             for (const section of sections) {
@@ -998,17 +916,18 @@ class MangaDex extends paperback_extensions_common_1.Source {
                     let results = [];
                     if (json.results === undefined)
                         throw new Error(`Failed to parse json results for section ${section.section.title}`);
-                    const coverIds = json.results.map((x) => x.relationships.filter((x) => x.type == 'cover_art').map((x) => x.id)[0]).filter((x) => x != undefined);
-                    let coversDict = {};
-                    if (coverIds.length > 0) {
-                        coversDict = yield this.getCovers(coverIds);
-                    }
                     for (const manga of json.results) {
                         const mangaId = manga.data.id;
                         const mangaDetails = manga.data.attributes;
                         const title = this.decodeHTMLEntity(mangaDetails.title[Object.keys(mangaDetails.title)[0]]);
-                        const coverId = manga.relationships.filter((x) => x.type == 'cover_art').map((x) => x.id)[0];
-                        const image = Object.keys(coversDict).includes(coverId) ? `${COVER_BASE_URL}/${mangaId}/${coversDict[coverId]}.256.jpg` : 'https://i.imgur.com/6TrIues.jpg';
+                        const coverFileName = manga.relationships.filter((x) => x.type == 'cover_art').map((x) => { var _a; return (_a = x.attributes) === null || _a === void 0 ? void 0 : _a.fileName; })[0];
+                        let image;
+                        if (coverFileName) {
+                            image = `${COVER_BASE_URL}/${mangaId}/${coverFileName}.256.jpg`;
+                        }
+                        else {
+                            image = 'https://i.imgur.com/6TrIues.jpg';
+                        }
                         results.push(createMangaTile({
                             id: mangaId,
                             title: createIconText({ text: title }),
@@ -1031,16 +950,16 @@ class MangaDex extends paperback_extensions_common_1.Source {
             let results = [];
             let url = '';
             switch (homepageSectionId) {
+                case 'featured': {
+                    url = yield this.getCustomListRequestURL('8018a70b-1492-4f91-a584-7451d7787f7a');
+                    break;
+                }
+                case 'popular': {
+                    url = `${MANGADEX_API}/manga?limit=100&offset=${offset}&contentRating[]=none&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic&includes[]=cover_art`;
+                    break;
+                }
                 case 'recently_updated': {
-                    url = `${MANGADEX_API}/manga?limit=100&offset=${offset}&contentRating[0]=none&contentRating[1]=safe&contentRating[2]=suggestive&contentRating[3]=erotica&contentRating[4]=pornographic`;
-                    break;
-                }
-                case 'shounen': {
-                    url = `${MANGADEX_API}/manga?limit=100&publicationDemographic[0]=shounen&offset=${offset}&contentRating[0]=none&contentRating[1]=safe&contentRating[2]=suggestive&contentRating[3]=erotica&contentRating[4]=pornographic`;
-                    break;
-                }
-                case 'action': {
-                    url = `${MANGADEX_API}/manga?limit=100&includedTags[0]=391b0423-d847-456f-aff0-8b0cfc03066b&offset=${offset}&contentRating[0]=none&contentRating[1]=safe&contentRating[2]=suggestive&contentRating[3]=erotica&contentRating[4]=pornographic`;
+                    url = `${MANGADEX_API}/manga?limit=100&offset=${offset}&contentRating[]=none&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic&includes[]=cover_art&order[updatedAt]=desc`;
                     break;
                 }
             }
@@ -1052,17 +971,18 @@ class MangaDex extends paperback_extensions_common_1.Source {
             const json = typeof response.data === "string" ? JSON.parse(response.data) : response.data;
             if (json.results === undefined)
                 throw new Error(`Failed to parse json results for getViewMoreItems`);
-            const coverIds = json.results.map((x) => x.relationships.filter((x) => x.type == 'cover_art').map((x) => x.id)[0]).filter((x) => x != undefined);
-            let coversDict = {};
-            if (coverIds.length > 0) {
-                coversDict = yield this.getCovers(coverIds);
-            }
             for (const manga of json.results) {
                 const mangaId = manga.data.id;
                 const mangaDetails = manga.data.attributes;
                 const title = this.decodeHTMLEntity(mangaDetails.title[Object.keys(mangaDetails.title)[0]]);
-                const coverId = manga.relationships.filter((x) => x.type == 'cover_art').map((x) => x.id)[0];
-                const image = Object.keys(coversDict).includes(coverId) ? `${COVER_BASE_URL}/${mangaId}/${coversDict[coverId]}.256.jpg` : 'https://i.imgur.com/6TrIues.jpg';
+                const coverFileName = manga.relationships.filter((x) => x.type == 'cover_art').map((x) => { var _a; return (_a = x.attributes) === null || _a === void 0 ? void 0 : _a.fileName; })[0];
+                let image;
+                if (coverFileName) {
+                    image = `${COVER_BASE_URL}/${mangaId}/${coverFileName}.256.jpg`;
+                }
+                else {
+                    image = 'https://i.imgur.com/6TrIues.jpg';
+                }
                 if (!collectedIds.includes(mangaId)) {
                     results.push(createMangaTile({
                         id: mangaId,
