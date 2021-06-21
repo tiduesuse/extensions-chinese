@@ -566,7 +566,7 @@ const MANGANATO_DOMAIN = 'https://manganato.com';
 const READMANGANATO_DOMAIN = 'https://readmanganato.com';
 const method = 'GET';
 exports.ManganeloInfo = {
-    version: '2.3.0',
+    version: '2.3.1',
     name: 'Manganelo',
     icon: 'icon.png',
     author: 'Daniel Kovalevich & Netsky',
@@ -582,8 +582,14 @@ exports.ManganeloInfo = {
     ]
 };
 class Manganelo extends paperback_extensions_common_1.Source {
-    getMangaShareUrl(mangaId) { return `${MN_DOMAIN}/manga/${mangaId}`; }
-    ;
+    getMangaShareUrl(mangaId) {
+        if (mangaId.includes('manga')) {
+            return `${READMANGANATO_DOMAIN}/${mangaId}`;
+        }
+        else {
+            return `${MN_DOMAIN}/manga/${mangaId}`;
+        }
+    }
     // Temporary solution until migration is out in public builds
     getNewMangaId(oldMangaId) {
         var _a;
@@ -838,7 +844,7 @@ exports.parseChapters = ($, mangaId) => {
         const title = decodeHTMLEntity($("a.chapter-name", chapter).text().trim());
         const id = (_b = (_a = $("a", chapter).attr('href')) === null || _a === void 0 ? void 0 : _a.split('/').pop()) !== null && _b !== void 0 ? _b : "";
         const date = new Date((_c = $('span.chapter-time', chapter).attr("title")) !== null && _c !== void 0 ? _c : "");
-        const chapRegex = title.match(/(\d+\.?\_?\d?)/);
+        const chapRegex = title.match(/(?:[Cc]hapter)\s(\d+\.?\d?)/);
         let chapterNumber = 0;
         if (chapRegex && chapRegex[1])
             chapterNumber = Number(chapRegex[1].replace(/\\/g, "."));
