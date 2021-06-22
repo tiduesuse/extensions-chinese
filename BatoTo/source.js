@@ -30325,7 +30325,7 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const Parser_1 = require("./Parser");
 const BATOTO_DOMAIN = 'https://bato.to';
 exports.BatoToInfo = {
-    version: '1.1.8',
+    version: '1.1.9',
     name: 'Bato.To',
     description: 'Extension that pulls western comics from bato.to',
     author: 'GameFuzzy',
@@ -30539,7 +30539,7 @@ class BatoTo extends paperback_extensions_common_1.Source {
             });
         });
     }
-    cloudflareBypassRequest() {
+    getCloudflareBypassRequest() {
         return createRequestObject({
             url: `${BATOTO_DOMAIN}`,
             method: 'GET',
