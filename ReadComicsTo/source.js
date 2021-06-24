@@ -514,7 +514,7 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const Parser_1 = require("./Parser");
 const READCOMICSTO_DOMAIN = 'https://readcomiconline.li';
 exports.ReadComicsToInfo = {
-    version: '1.0.6',
+    version: '1.0.7',
     name: 'ReadComicsOnlineLi',
     description: 'Extension that pulls western comics from readcomiconline.li',
     author: 'Aurora',
@@ -522,7 +522,12 @@ exports.ReadComicsToInfo = {
     icon: "logo.png",
     hentaiSource: false,
     websiteBaseURL: READCOMICSTO_DOMAIN,
-    sourceTags: []
+    sourceTags: [
+        {
+            text: "Buggy",
+            type: paperback_extensions_common_1.TagType.RED
+        }
+    ]
 };
 class ReadComicsTo extends paperback_extensions_common_1.Source {
     constructor() {
