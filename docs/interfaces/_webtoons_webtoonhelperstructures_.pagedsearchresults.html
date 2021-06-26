@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>UpdatedManga | extensions</title>
+	<title>PagedSearchResults | extensions</title>
 	<meta name="description" content="Documentation for extensions">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_mangakakalot_mangakakalotparser_.html">&quot;Mangakakalot/MangakakalotParser&quot;</a>
+					<a href="../modules/_webtoons_webtoonhelperstructures_.html">&quot;Webtoons/WebtoonHelperStructures&quot;</a>
 				</li>
 				<li>
-					<a href="_mangakakalot_mangakakalotparser_.updatedmanga.html">UpdatedManga</a>
+					<a href="_webtoons_webtoonhelperstructures_.pagedsearchresults.html">PagedSearchResults</a>
 				</li>
 			</ul>
-			<h1>Interface UpdatedManga</h1>
+			<h1>Interface PagedSearchResults</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">UpdatedManga</span>
+						<span class="target">PagedSearchResults</span>
 					</li>
 				</ul>
 			</section>
@@ -84,8 +84,10 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_mangakakalot_mangakakalotparser_.updatedmanga.html#ids" class="tsd-kind-icon">ids</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_mangakakalot_mangakakalotparser_.updatedmanga.html#loadmore" class="tsd-kind-icon">load<wbr>More</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_webtoons_webtoonhelperstructures_.pagedsearchresults.html#chapters" class="tsd-kind-icon">chapters</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_webtoons_webtoonhelperstructures_.pagedsearchresults.html#hasnextpage" class="tsd-kind-icon">has<wbr>Next<wbr>Page</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_webtoons_webtoonhelperstructures_.pagedsearchresults.html#pagnationid" class="tsd-kind-icon">pagnation<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_webtoons_webtoonhelperstructures_.pagedsearchresults.html#titleid" class="tsd-kind-icon">title<wbr>Id</a></li>
 							</ul>
 						</section>
 					</div>
@@ -94,22 +96,42 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="ids" class="tsd-anchor"></a>
-					<h3>ids</h3>
-					<div class="tsd-signature tsd-kind-icon">ids<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<a name="chapters" class="tsd-anchor"></a>
+					<h3>chapters</h3>
+					<div class="tsd-signature tsd-kind-icon">chapters<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Chapter</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Paperback-iOS/extensions-promises/blob/fcdb9ef/src/Mangakakalot/MangakakalotParser.ts#L118">src/Mangakakalot/MangakakalotParser.ts:118</a></li>
+							<li>Defined in <a href="https://github.com/Paperback-iOS/extensions-promises/blob/fcdb9ef/src/Webtoons/WebtoonHelperStructures.ts#L4">src/Webtoons/WebtoonHelperStructures.ts:4</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="loadmore" class="tsd-anchor"></a>
-					<h3>load<wbr>More</h3>
-					<div class="tsd-signature tsd-kind-icon">load<wbr>More<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="hasnextpage" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> has<wbr>Next<wbr>Page</h3>
+					<div class="tsd-signature tsd-kind-icon">has<wbr>Next<wbr>Page<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Paperback-iOS/extensions-promises/blob/fcdb9ef/src/Mangakakalot/MangakakalotParser.ts#L119">src/Mangakakalot/MangakakalotParser.ts:119</a></li>
+							<li>Defined in <a href="https://github.com/Paperback-iOS/extensions-promises/blob/fcdb9ef/src/Webtoons/WebtoonHelperStructures.ts#L7">src/Webtoons/WebtoonHelperStructures.ts:7</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="pagnationid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> pagnation<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">pagnation<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Paperback-iOS/extensions-promises/blob/fcdb9ef/src/Webtoons/WebtoonHelperStructures.ts#L5">src/Webtoons/WebtoonHelperStructures.ts:5</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="titleid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> title<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">title<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Paperback-iOS/extensions-promises/blob/fcdb9ef/src/Webtoons/WebtoonHelperStructures.ts#L6">src/Webtoons/WebtoonHelperStructures.ts:6</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -122,7 +144,7 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="../modules/_mangakakalot_mangakakalotparser_.html">&quot;<wbr>Mangakakalot/<wbr>Mangakakalot<wbr>Parser&quot;</a>
+						<a href="../modules/_webtoons_webtoonhelperstructures_.html">&quot;<wbr>Webtoons/<wbr>Webtoon<wbr>Helper<wbr>Structures&quot;</a>
 					</li>
 				</ul>
 			</nav>
@@ -131,51 +153,24 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
-						<a href="_mangakakalot_mangakakalotparser_.updatedmanga.html" class="tsd-kind-icon">Updated<wbr>Manga</a>
+						<a href="_webtoons_webtoonhelperstructures_.pagedsearchresults.html" class="tsd-kind-icon">Paged<wbr>Search<wbr>Results</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_mangakakalot_mangakakalotparser_.updatedmanga.html#ids" class="tsd-kind-icon">ids</a>
+								<a href="_webtoons_webtoonhelperstructures_.pagedsearchresults.html#chapters" class="tsd-kind-icon">chapters</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_mangakakalot_mangakakalotparser_.updatedmanga.html#loadmore" class="tsd-kind-icon">load<wbr>More</a>
+								<a href="_webtoons_webtoonhelperstructures_.pagedsearchresults.html#hasnextpage" class="tsd-kind-icon">has<wbr>Next<wbr>Page</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_webtoons_webtoonhelperstructures_.pagedsearchresults.html#pagnationid" class="tsd-kind-icon">pagnation<wbr>Id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_webtoons_webtoonhelperstructures_.pagedsearchresults.html#titleid" class="tsd-kind-icon">title<wbr>Id</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/_mangakakalot_mangakakalotparser_.html#generatesearch" class="tsd-kind-icon">generate<wbr>Search</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/_mangakakalot_mangakakalotparser_.html#islastpage" class="tsd-kind-icon">is<wbr>Last<wbr>Page</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/_mangakakalot_mangakakalotparser_.html#parsehomesections" class="tsd-kind-icon">parse<wbr>Home<wbr>Sections</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/_mangakakalot_mangakakalotparser_.html#parsemangasectiontiles" class="tsd-kind-icon">parse<wbr>Manga<wbr>Section<wbr>Tiles</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/_mangakakalot_mangakakalotparser_.html#parsemangakakalotchapterdetails" class="tsd-kind-icon">parse<wbr>Mangakakalot<wbr>Chapter<wbr>Details</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/_mangakakalot_mangakakalotparser_.html#parsemangakakalotchapters" class="tsd-kind-icon">parse<wbr>Mangakakalot<wbr>Chapters</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/_mangakakalot_mangakakalotparser_.html#parsemangakakalotmangadetails" class="tsd-kind-icon">parse<wbr>Mangakakalot<wbr>Manga<wbr>Details</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/_mangakakalot_mangakakalotparser_.html#parsesearch" class="tsd-kind-icon">parse<wbr>Search</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/_mangakakalot_mangakakalotparser_.html#parsetags" class="tsd-kind-icon">parse<wbr>Tags</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_mangakakalot_mangakakalotparser_.html#parsetiles" class="tsd-kind-icon">parse<wbr>Tiles</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/_mangakakalot_mangakakalotparser_.html#parseviewmore" class="tsd-kind-icon">parse<wbr>View<wbr>More</a>
-					</li>
 				</ul>
 			</nav>
 		</div>
