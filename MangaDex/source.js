@@ -570,7 +570,7 @@ exports.MangaDexInfo = {
     description: 'Extension that pulls manga from MangaDex',
     icon: 'icon.png',
     name: 'MangaDex',
-    version: '1.1.1',
+    version: '1.1.2',
     authorWebsite: 'https://github.com/nar1n',
     websiteBaseURL: MANGADEX_DOMAIN,
     hentaiSource: false,
@@ -999,6 +999,7 @@ class MangaDex extends paperback_extensions_common_1.Source {
         });
     }
     filterUpdatedManga(mangaUpdatesFoundCallback, time, ids) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             let legacyIds = ids.filter(x => !x.includes('-'));
             let conversionDict = {};
@@ -1011,11 +1012,12 @@ class MangaDex extends paperback_extensions_common_1.Source {
             let offset = 0;
             const maxRequests = 100;
             let loadNextPage = true;
+            let mangaToUpdate = [];
             let updatedManga = [];
             const updatedAt = time.toISOString().split('.')[0]; // They support a weirdly truncated version of an ISO timestamp
             while (loadNextPage) {
                 const request = createRequestObject({
-                    url: `${MANGADEX_API}/manga?limit=100&offset=${offset}&updatedAtSince=${updatedAt}&contentRating[]=none&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic&includes[]=cover_art&order[updatedAt]=desc`,
+                    url: `${MANGADEX_API}/chapter?limit=100&offset=${offset}&publishAtSince=${updatedAt}&order[publishAt]=desc`,
                     method: 'GET',
                 });
                 const response = yield this.requestManager.schedule(request, 1);
@@ -1029,29 +1031,27 @@ class MangaDex extends paperback_extensions_common_1.Source {
                     console.log(`Failed to parse JSON results for filterUpdatedManga using the date ${updatedAt} and the offset ${offset}`);
                     return;
                 }
-                for (const manga of json.results) {
-                    const mangaId = manga.data.id;
-                    const mangaTime = new Date(manga.data.attributes.updatedAt);
-                    if (mangaTime <= time) {
-                        loadNextPage = false;
-                    }
-                    else if (ids.includes(mangaId)) {
+                for (const chapter of json.results) {
+                    const mangaId = (_a = chapter.relationships.filter((x) => x.type == 'manga')[0]) === null || _a === void 0 ? void 0 : _a.id;
+                    if (ids.includes(mangaId) && !updatedManga.includes(mangaId)) {
+                        mangaToUpdate.push(mangaId);
                         updatedManga.push(mangaId);
                     }
                     else if (ids.includes(conversionDict[mangaId])) {
-                        updatedManga.push(conversionDict[mangaId]);
+                        mangaToUpdate.push(conversionDict[mangaId]);
+                        updatedManga.push(mangaId);
                     }
                 }
                 offset = offset + 100;
                 if (json.total <= offset || offset >= 100 * maxRequests) {
                     loadNextPage = false;
                 }
-                if (updatedManga.length > 0) {
+                if (mangaToUpdate.length > 0) {
                     mangaUpdatesFoundCallback(createMangaUpdates({
-                        ids: updatedManga
+                        ids: mangaToUpdate
                     }));
                 }
-                updatedManga = [];
+                mangaToUpdate = [];
             }
         });
     }
