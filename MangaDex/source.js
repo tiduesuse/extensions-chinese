@@ -570,7 +570,7 @@ exports.MangaDexInfo = {
     description: 'Extension that pulls manga from MangaDex',
     icon: 'icon.png',
     name: 'MangaDex',
-    version: '1.1.4',
+    version: '1.1.5',
     authorWebsite: 'https://github.com/nar1n',
     websiteBaseURL: MANGADEX_DOMAIN,
     hentaiSource: false,
@@ -1053,6 +1053,7 @@ class MangaDex extends paperback_extensions_common_1.Source {
                 }
                 mangaToUpdate = [];
             }
+            mangaUpdatesFoundCallback(createMangaUpdates({ ids: [] }));
         });
     }
     decodeHTMLEntity(str) {
