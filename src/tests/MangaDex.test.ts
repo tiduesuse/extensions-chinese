@@ -15,7 +15,7 @@ describe('MangaDex Tests', function () {
      * Try to choose a manga which is updated frequently, so that the historical checking test can 
      * return proper results, as it is limited to searching 30 days back due to extremely long processing times otherwise.
      */
-    const mangaId = '32d76d19-8a05-4db0-9fc2-e0b0648fe9d0' // Solo Leveling
+    const mangaId = 'a25e46ec-30f7-4db6-89df-cacbc1d9a900' // Horimiya, because it doesnt have 50 million chapters :nowidepepe:
 
     it("Retrieve Manga Details", async () => {
         let details = await wrapper.getMangaDetails(source, mangaId);

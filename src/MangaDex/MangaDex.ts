@@ -28,9 +28,10 @@ export const MangaDexInfo: SourceInfo = {
   description: 'Extension that pulls manga from MangaDex',
   icon: 'icon.png',
   name: 'MangaDex',
-  version: '1.1.5',
+  version: '1.2.0',
   authorWebsite: 'https://github.com/nar1n',
   websiteBaseURL: MANGADEX_DOMAIN,
+  // @ts-ignore
   hentaiSource: false,
   language: LanguageCode.ENGLISH,
   sourceTags: [
@@ -159,7 +160,7 @@ export class MangaDex extends Source {
     const response = await this.requestManager.schedule(request, 1)
     const json = (typeof response.data) === "string" ? JSON.parse(response.data) : response.data
 
-    return `${MANGADEX_API}/manga?limit=100&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic&includes[]=cover_art&ids[]=${json.relationships.filter((x: any) => x.type == 'manga').map((x: any) => x.id).join('&ids[]=')}`
+    return `${MANGADEX_API}/manga?limit=100&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic&includes[]=cover_art&ids[]=${(json.data?.relationships ?? json.relationships).filter((x: any) => x.type == 'manga').map((x: any) => x.id).join('&ids[]=')}`
   }
 
   async getMangaDetails(mangaId: string): Promise<Manga> {
@@ -197,10 +198,10 @@ export class MangaDex extends Source {
       }))
     }
     
-    const author = json.relationships.filter((x: any) => x.type == 'author').map((x: any) => x.attributes.name).join(', ')
-    const artist = json.relationships.filter((x: any) => x.type == 'artist').map((x: any) => x.attributes.name).join(', ')
+    const author = (json.data?.relationships ?? json.relationships).filter((x: any) => x.type == 'author').map((x: any) => x.attributes.name).join(', ')
+    const artist = (json.data?.relationships ?? json.relationships).filter((x: any) => x.type == 'artist').map((x: any) => x.attributes.name).join(', ')
 
-    const coverFileName = json.relationships.filter((x: any) => x.type == 'cover_art').map((x: any) => x.attributes?.fileName)[0]
+    const coverFileName = (json.data?.relationships ?? json.relationships).filter((x: any) => x.type == 'cover_art').map((x: any) => x.attributes?.fileName)[0]
     let image: string
     if (coverFileName) {
       image = `${COVER_BASE_URL}/${newMangaId}/${coverFileName}`
@@ -247,9 +248,11 @@ export class MangaDex extends Source {
       const json = (typeof response.data) === "string" ? JSON.parse(response.data) : response.data
       offset += 500
 
-      if(json.results === undefined) throw new Error(`Failed to parse json results for ${newMangaId}`)
+      const results = json.data ?? json.results
 
-      for (const chapter of json.results) {
+      if(results === undefined) throw new Error(`Failed to parse json results for ${newMangaId}`)
+
+      for (const chapter of results) {
         const chapterId = chapter.data.id
         const chapterDetails = chapter.data.attributes
         const name =  this.decodeHTMLEntity(chapterDetails.title)
@@ -330,10 +333,11 @@ export class MangaDex extends Source {
     }
 
     const json = (typeof response.data) === "string" ? JSON.parse(response.data) : response.data
+    const apiResults = json.data ?? json.results
 
-    if(json.results === undefined) {throw new Error(`Failed to parse json for the given search`)}
+    if(apiResults === undefined) {throw new Error(`Failed to parse json for the given search`)}
 
-    for (const manga of json.results) {
+    for (const manga of apiResults) {
       const mangaId = manga.data.id
       const mangaDetails = manga.data.attributes
       const title = this.decodeHTMLEntity(mangaDetails.title[Object.keys(mangaDetails.title)[0]])
@@ -406,9 +410,10 @@ export class MangaDex extends Source {
           const json = (typeof response.data) === "string" ? JSON.parse(response.data) : response.data
           let results = []
 
-          if(json.results === undefined) throw new Error(`Failed to parse json results for section ${section.section.title}`)
+          const apiResults = json.data ?? json.results
+          if(apiResults === undefined) throw new Error(`Failed to parse json results for section ${section.section.title}`)
 
-          for (const manga of json.results) {
+          for (const manga of apiResults) {
             const mangaId = manga.data.id
             const mangaDetails = manga.data.attributes
             const title = this.decodeHTMLEntity(mangaDetails.title[Object.keys(mangaDetails.title)[0]])
@@ -437,7 +442,7 @@ export class MangaDex extends Source {
     await Promise.all(promises)
   }
 
-  async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults | null> {
+  async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
     let offset: number = metadata?.offset ?? 0
     let collectedIds: string[] = metadata?.collectedIds ?? []
     let results: MangaTile[] = []
@@ -465,10 +470,10 @@ export class MangaDex extends Source {
 
     const response = await this.requestManager.schedule(request, 1)
     const json = (typeof response.data) === "string" ? JSON.parse(response.data) : response.data
+    const apiResults = json.data ?? json.results
+    if(apiResults === undefined) throw new Error(`Failed to parse json results for getViewMoreItems`)
 
-    if(json.results === undefined) throw new Error(`Failed to parse json results for getViewMoreItems`)
-
-    for (const manga of json.results) {
+    for (const manga of apiResults) {
       const mangaId = manga.data.id
       const mangaDetails = manga.data.attributes
       const title = this.decodeHTMLEntity(mangaDetails.title[Object.keys(mangaDetails.title)[0]])
@@ -527,14 +532,14 @@ export class MangaDex extends Source {
       }
 
       const json = (typeof response.data) === "string" ? JSON.parse(response.data) : response.data
-
-      if(json.results === undefined) {
+      const apiResults = json.data ?? json.results
+      if(apiResults === undefined) {
         // Log this, no need to throw.
         console.log(`Failed to parse JSON results for filterUpdatedManga using the date ${updatedAt} and the offset ${offset}`)
         return
       }
 
-      for (const chapter of json.results) {
+      for (const chapter of apiResults) {
         const mangaId = chapter.relationships.filter((x: any)=> x.type == 'manga')[0]?.id
 
         if (ids.includes(mangaId) && !updatedManga.includes(mangaId)) {
