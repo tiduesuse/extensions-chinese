@@ -15,7 +15,7 @@ export class Parser {
 
         let image = $('.shadow-6').attr('src')
 
-        let summary = $('pre', $('.attr-main')).text().trim()
+        let summary =$('div.limit-html').text().trim()
 
         // Doesn't work, assuming it's because they're created by some JS script
         /*
