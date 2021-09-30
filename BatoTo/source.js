@@ -26999,7 +26999,7 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const Parser_1 = require("./Parser");
 const BATOTO_DOMAIN = 'https://bato.to';
 exports.BatoToInfo = {
-    version: '1.1.9',
+    version: '1.1.10',
     name: 'Bato.To',
     description: 'Extension that pulls western comics from bato.to',
     author: 'GameFuzzy',
@@ -27313,7 +27313,7 @@ class Parser {
         for (let title of altTitles)
             titles.push(this.decodeHTMLEntity(title));
         let image = $('.shadow-6').attr('src');
-        let summary = $('pre', $('.attr-main')).text().trim();
+        let summary = $('div.limit-html').text().trim();
         // Doesn't work, assuming it's because they're created by some JS script
         /*
         let relatedIds: string[] = []
