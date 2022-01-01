@@ -19,7 +19,7 @@ const READCOMICSTO_DOMAIN = 'https://readcomiconline.li'
 
 export const ReadComicsToInfo: SourceInfo = {
     version: '1.0.7',
-    name: 'ReadComicsOnlineLi2',
+    name: 'ReadComicsOnlineLiLILI',
     description: 'Extension that pulls western comics from readcomiconline.li',
     author: 'Aurora',
     authorWebsite: 'https://github.com/Aur0raN',
