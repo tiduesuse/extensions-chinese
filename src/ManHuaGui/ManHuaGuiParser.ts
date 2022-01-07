@@ -1,126 +1,93 @@
-import { Chapter, ChapterDetails, HomeSection, LanguageCode, Manga, MangaStatus, MangaTile, SearchRequest, TagSection } from "paperback-extensions-common";
+import {r
+  Chapter, 
+  ChapterDetails, 
+  HomeSection, 
+  LanguageCode, 
+  Manga, 
+  MangaStatus, 
+  MangaTile, 
+  SearchRequest, 
+  Tag,
+  TagSection } from "paperback-extensions-common";
+
+const MG_DOMAIN = 'https://www.manhuagui.com'
 
 export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
-    const tagSections: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: [] }),
-    createTagSection({ id: '1', label: 'format', tags: [] })]
+    const titles = $('div.book-title').contents().map(
+      function(this: Text) {
+        return $(this).text().trim()
+      }
+    ).get().filter(x => x !== '')
+    const image = "https:" + $('img', 'p.hcover').attr('src') ?? ""
+    const panel = $('ul.detail-list')
+    let status = MangaStatus.UNKNOWN
+    const stext = $('span.red:first', panel).text()
+    if (stext == "连载中") {
+      status = MangaStatus.ONGOING
+    } else if (stext == '已完结') {
+      status = MangaStatus.COMPLETED
+    }     
+    const author = $('a[href*="author"]', panel).text() ?? ""
+    const panel1 = $('ul.detail-list li:eq(1)')
+    const genres = $('a[href*="list"]', panel1).contents().map(
+      function(this: Text) {
+        return $(this).text()
+      }
+    ).get()
+    const arrayTags: Tag[] = []
 
-    const image: string = $('img', '.manga').attr('src') ?? ""
-    const rating: string = $('i', '#rating').text()
-    const tableBody = $('tbody', '.manga')
-    const titles: string[] = []
-    const title = $('.manga').find('a').first().text()
-    titles.push(title.substring(0, title.lastIndexOf(' ')))
-
-    let hentai = false
-    let author = ""
-    let artist = ""
-    let views = 0
-    let status = MangaStatus.ONGOING
-    for (const row of $('tr', tableBody).toArray()) {
-        const elem = $('th', row).html()
-        switch (elem) {
-            case 'Author(s)': author = $('a', row).text(); break
-            case 'Artist(s)': artist = $('a', row).first().text(); break
-            case 'Popularity': {
-                let pop = (/has (\d*(\.?\d*\w)?)/g.exec($('td', row).text()) ?? [])[1]
-                if (pop.includes('k')) {
-                    pop = pop.replace('k', '')
-                    views = Number(pop) * 1000
-                }
-                else {
-                    views = Number(pop) ?? 0
-                }
-                break
-            }
-            case 'Alternative': {
-                const alts = $('td', row).text().split('  ')
-                for (const alt of alts) {
-                    const trim = alt.trim().replace(/(;*\t*)/g, '')
-                    if (trim != '')
-                        titles.push(trim)
-                }
-                break
-            }
-            case 'Genre(s)': {
-                for (const genre of $('a', row).toArray()) {
-                    const item = $(genre).html() ?? ""
-                    const id = $(genre).attr('href')?.split('/').pop() ?? ''
-                    const tag = item.replace(/<[a-zA-Z\/][^>]*>/g, "")
-                    if (item.includes('Hentai')) hentai = true
-                    tagSections[0].tags.push(createTag({ id: id, label: tag }))
-                }
-                break
-            }
-            case 'Status': {
-                const stat = $('td', row).text()
-                if (stat.includes('Ongoing'))
-                    status = MangaStatus.ONGOING
-                else if (stat.includes('Completed'))
-                    status = MangaStatus.COMPLETED
-                break
-            }
-            case 'Type': {
-                const type = $('td', row).text().split('-')[0].trim()
-                let id = ''
-                if (type.includes('Manga')) id = 'manga'
-                else if (type.includes('Manhwa')) id = 'manhwa'
-                else if (type.includes('Manhua')) id = 'manhua'
-                else id = 'unknown'
-                tagSections[1].tags.push(createTag({ id: id, label: type.trim() }))
-            }
-        }
+    if (genres.length > 0) {
+      for (const item of genres) {
+        const label = item.trim()
+        const id = label
+        arrayTags.push({ id: id, label: label })
+      }
     }
 
-    const desc = $('.summary').html() ?? ""
+    const tagSections: TagSection[] = [createTagSection({
+      id: '0',
+      label: 'genres',
+      tags: arrayTags.length > 0 ? arrayTags.map(x => createTag(x)) : []
+    })]
+
+    const desc = $('#intro-cut').text() ?? ""
+
+    // const desc = $('.summary').html() ?? ""
     return createManga({
         id: mangaId,
         titles,
-        image: image.replace(/(https:)?\/\//gi, 'https://'),
-        rating: Number(rating),
+        image,
+        rating: Number(''),
         status,
-        artist,
+        artist: '',
         author,
         tags: tagSections,
-        views,
+        views: Number(''),
         desc,
-        //hentai
         hentai: false
     })
 }
 
 export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
+    const allChapters = $('a.status0')
     const chapters: Chapter[] = []
-    for (const elem of $('#list').children('div').toArray()) {
-        // streamNum helps me navigate the weird id/class naming scheme
-        const streamNum = /(\d+)/g.exec($(elem).attr('id') ?? "")?.[0]
-        const group = $(`.ml-1.stream-text-${streamNum}`, elem).text()
 
-        let volume = 1
-        let chapNum = 1
-        const volumes = $('.volume', elem).toArray().reverse()
-        for (const vol of volumes) {
-            const chapterElem = $('li', vol).toArray().reverse()
-            for (const chap of chapterElem) {
-                const chapId = $(chap).attr('id')?.replace('b-', 'i')
-                let name: string | undefined
-                const nameArr = ($('a', chap).html() ?? "").replace(/(\t*\n*)/g, '').split(':')
-                name = nameArr.length > 1 ? nameArr[1].trim() : undefined
+    for (let chapter of $(allChapters).toArray()) {
+      const id: string = MG_DOMAIN + $(chapter).attr('href') ?? ''
+      const name: string = $(chapter).attr('title') ?? ''
+      let chapStr: string = id.split('/').pop() ?? ''
+      chapStr = chapStr.split('.')[0] ?? ''
+      const chapNum: number = Number(chapStr)
+      const time: Date = new Date('')
 
-                const time = convertTime($('.time', chap).text().trim())
-                chapters.push(createChapter({
-                    id: chapId ?? '',
-                    mangaId,
-                    name,
-                    chapNum,
-                    volume,
-                    time,
-                    group,
-                    langCode: LanguageCode.ENGLISH
-                }))
-                chapNum++
-            }
-            volume++
-        }
+      chapters.push(createChapter({
+        id,
+        mangaId,
+        name,
+        langCode: LanguageCode.CHINEESE,
+        chapNum,
+        time
+      }))
     }
 
     return chapters
@@ -140,10 +107,10 @@ export const parseChapterDetails = (data: any, mangaId: string, chapterId: strin
     })
 }
 
-export interface UpdatedManga {
-    ids: string[];
-    loadMore: boolean;
-}
+// export interface UpdatedManga {
+//     ids: string[];
+//     loadMore: boolean;
+// }
 
 export const parseUpdatedManga = ($: CheerioStatic, time: Date, ids: string[]): UpdatedManga => {
     const manga: string[] = []

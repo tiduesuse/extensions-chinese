@@ -17,10 +17,12 @@
     "paperback-cli": "^1.4.0",
     "paperback-extensions-common": "^5.0.0-alpha.5",
     "ts-mocha": "^7.0.0",
+    "ts-node": "^7.0.1",
     "tsify": "^4.0.2",
-    "typescript": "^3.9.6"
+    "typescript": "^3.9.10"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/cheerio": "^0.22.21",
     "@types/mocha": "^7.0.2",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
