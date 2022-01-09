@@ -3,27 +3,57 @@ import * as cheerio from 'cheerio'
 import { readFileSync } from 'fs'
 import { RequestManager }from "paperback-extensions-common"
 
-
-const html = readFileSync('./manga.html', 'utf-8')
-const $ = cheerio.load(html)
-
-const MG_DOMAIN = 'https://www.manhuagui.com'
-const allChapters = $('a.status0')
-
-for (let chapter of $(allChapters).toArray()) {
-  const id: string = MG_DOMAIN + $(chapter).attr('href') ?? ''
-  const name: string = $(chapter).attr('title') ?? ''
-  let chapstr: string = id.split('/').pop() ?? ''
-  chapstr = chapstr.split('.')[0] ?? ''
-  const chapNum: number = Number( id.split('/').pop() )
-  const time: Date = new Date('')
-  console.log(id)
-  console.log(name)
-  console.log(chapstr)
-  console.log(time)
-  break
+const MG_DOMAIN = 'https://www.manhuagui.com' 
+const mid_addr = 'comic'
+const mangaId = '1128'
+const chapterId = '605795'
+const method = 'GET'
+const headers = {
+  'Host': 'www.manhuagui.com'
 }
-// const chpt0 = $('a.status0')[0]
-// const res = $(chpt0).text() ?? ""
+
+const url = MG_DOMAIN + '/' + mid_addr + '/' + mangaId
+const urlChpt = MG_DOMAIN + '/' + mid_addr + '/' + mangaId + '/' + chapterId + '.html#1'
+// const AxiosInst = axios.create()
+
+const puppeteer = require('puppeteer');
+
+// let bodyHTML = '';
+// (async () => {
+//   const browser = await puppeteer.launch();
+//   const page = await browser.newPage();
+//   await page.goto(urlChpt);
+//   const bodyHTML = await page.evaluate(() => document.body.innerHTML);
+//   console.log(bodyHTML);
+// })()
+
+// (async () => {
+//   const browser = await puppeteer.launch();
+//   const page = await browser.newPage();
+//   await page.goto(urlChpt);
+//   const bodyHTML = await page.evaluate(() => document.body.innerHTML);
+//   console.log(bodyHTML);
+// })
+
+async function myf(urlstr: string) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(urlstr);
+  const bodyHTML = await page.evaluate(() => document.body.innerHTML);
+  return bodyHTML;
+}
+
+myf(urlChpt).then((res) => {console.log(urlChpt)});
 // console.log(res)
+
+// AxiosInst.get(urlChpt).then(
+//   response => {
+//     const html = response.data
+//     console.log(html)
+//     const $ = cheerio.load(html)
+//     const addr = $('img#mangaFile').text()
+//     console.log(addr)
+//   }
+// ).catch(console.error)
+
 

@@ -3,13 +3,6 @@ import * as cheerio from 'cheerio'
 import { readFileSync } from 'fs'
 import { RequestManager }from "paperback-extensions-common"
 
-// const mg_domain = 'https://www.manhuagui.com'
-// const mid_addr = 'comic'
-// const mangaId = '1128'
-// const method = 'GET'
-// const headers = {
-//   'Host': 'www.manhuagui.com'
-// }
 
 const MG_DOMAIN = 'https://www.frscan.cc'
 const mid_addr = 'manga'
@@ -19,14 +12,6 @@ const method = 'GET'
 const headers = {
   'Host': 'www.frscan.cc'
 }
-
-// const MG_DOMAIN = 'https://v2.mangapark.net'
-// const mid_addr = 'manga'
-// const mangaId = 'kunoichi-tsubaki-no-mune-no-uchi'
-// const method = 'GET'
-// const headers = {
-//   'Host': 'v2.mangapark.net'
-// }
 
 const url = MG_DOMAIN + '/' + mid_addr + '/' + mangaId
 const urlChpt = MG_DOMAIN + '/' + mid_addr + '/' + mangaId + '/' + chapterId

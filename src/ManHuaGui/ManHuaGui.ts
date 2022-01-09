@@ -87,6 +87,8 @@ export class MManga extends Source {
 			method,
       headers
 		})
+    // need to use puppeteer to grab all the pages and their html, then combine them into 
+    // a big html data
 
 		const response = await this.requestManager.schedule(request, 1)
     const $ = this.cheerio.load(response.data)

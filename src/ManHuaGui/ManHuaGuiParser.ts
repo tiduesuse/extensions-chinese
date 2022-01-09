@@ -1,4 +1,4 @@
-import {r
+import {
   Chapter, 
   ChapterDetails, 
   HomeSection, 
@@ -98,7 +98,6 @@ export const parseChapterDetails = (data: any, mangaId: string, chapterId: strin
     const pages: string[] = []
     for (const page of script)
         pages.push(page.u)
-
     return createChapterDetails({
         id: chapterId,
         mangaId: mangaId,

@@ -16,6 +16,7 @@
     "cheerio": "^1.0.0-rc.10",
     "paperback-cli": "^1.4.0",
     "paperback-extensions-common": "^5.0.0-alpha.5",
+    "puppeteer": "^13.0.1",
     "ts-mocha": "^7.0.0",
     "ts-node": "^7.0.1",
     "tsify": "^4.0.2",
