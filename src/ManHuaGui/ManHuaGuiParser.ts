@@ -93,11 +93,12 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
     return chapters
 }
 
-export const parseChapterDetails = (data: any, mangaId: string, chapterId: string): ChapterDetails => {
-    const script = JSON.parse(/var _load_pages = (.*);/.exec(data)?.[1] ?? '')
-    const pages: string[] = []
-    for (const page of script)
-        pages.push(page.u)
+export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId: string): ChapterDetails => {
+    const pages = $('img#mangaFile').map(
+      function(this: Text) {
+        return $(this).attr('src')
+      }
+    ).get()
     return createChapterDetails({
         id: chapterId,
         mangaId: mangaId,

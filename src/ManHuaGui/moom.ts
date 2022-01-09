@@ -24,12 +24,13 @@ AxiosInst.get(urlChpt).then(
     const pages: string[] = []
     const allItems = $('img', '.viewer-cnt #all').toArray()
     console.log($(allItems[0]).attr('data-src'))
-    // for(let item of allItems) {
-    //   let page = $(item).attr('data-src')?.trim().split("/")[0] == "" ? 'https:' + $(item).attr('data-src')?.trim() : $(item).attr('data-src')?.trim()
-    //   if (typeof page === 'undefined')
-    //     continue;
-    //   pages.push(page);
-    // }
+    for(let item of allItems) {
+      let page = $(item).attr('data-src')?.trim().split("/")[0] == "" ? 'https:' + $(item).attr('data-src')?.trim() : $(item).attr('data-src')?.trim()
+      if (typeof page === 'undefined')
+        continue;
+      pages.push(page);
+    }
+    console.log(pages)
   }
 ).catch(console.error)
 

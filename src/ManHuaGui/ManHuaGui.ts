@@ -82,17 +82,37 @@ export class MManga extends Source {
 	}
 
 	async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
-		const request = createRequestObject({
-			url: `${MG_DOMAIN}/${mid_addr}/${mangaId}/${chapterId}`,
-			method,
-      headers
-		})
-    // need to use puppeteer to grab all the pages and their html, then combine them into 
-    // a big html data
+    const puppeteer = require('puppeteer')
+    const browser = await puppeteer.launch()
+    const url0 = MG_DOMAIN + '/' + mid_addr + '/' + mangaId + '/' + chapterId + '.html'
+    const page = await browser.newPage()
+    await page.goto(url0, {waitUntil: 'load'})
+    const html0 = await page.evaluate(() => document.body.innerHTML)
+    let $ = this.cheerio.load(html0)
+    const pagenum = Number($('span#page').parent().text().slice(0, -1).split('/').pop())
+    let outputHTML = '<html><head><title>all pages</title></head><body>'
+    for (let i = 3; i <= pagenum; i++) {
+      const urltmp = url0 + '#p=' + String(i)
+      const pagetmp = await browser.newPage()
+      await pagetmp.goto(urltmp, {waitUntil: 'load'})
+      const htmltmp = await pagetmp.evaluate(() => document.body.innerHTML)
+      $ = this.cheerio.load(htmltmp)
+      outputHTML += $('img#mangaFile').parent().html()
+      // console.log(outputHTML)
+    }
+    outputHTML += '</body></html>'
+    const $res = this.cheerio.load(outputHTML)
+		// const request = createRequestObject({
+		// 	url: `${MG_DOMAIN}/${mid_addr}/${mangaId}/${chapterId}`,
+		// 	method,
+    //   headers
+		// })
+    // // need to use puppeteer to grab all the pages and their html, then combine them into 
+    // // a big html data
 
-		const response = await this.requestManager.schedule(request, 1)
-    const $ = this.cheerio.load(response.data)
-		return parseChapterDetails($, mangaId, chapterId)
+		// const response = await this.requestManager.schedule(request, 1)
+    // const $ = this.cheerio.load(response.data)
+		return parseChapterDetails($res, mangaId, chapterId)
 	}
 
   ////// Need to work on
