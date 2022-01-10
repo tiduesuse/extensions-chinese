@@ -1,7 +1,5 @@
 import axios from 'axios'
 import * as cheerio from 'cheerio'
-import { readFileSync } from 'fs'
-import { RequestManager } from "paperback-extensions-common"
 
 const MG_DOMAIN = 'https://www.manhuagui.com' 
 const mid_addr = 'comic'
@@ -11,30 +9,40 @@ const method = 'GET'
 const headers = {
   'Host': 'www.manhuagui.com'
 }
+const tmpurl = 'https://www.bing.com'
+const qtitle = 'one piece'
+// const qtitle = '海贼王'
 
 const url = MG_DOMAIN + '/' + mid_addr + '/' + mangaId
 const urlChpt = MG_DOMAIN + '/' + mid_addr + '/' + mangaId + '/' + chapterId
-// const AxiosInst = axios.create()
+const search = qtitle?.replace(/ /g, '%20') + '.html' ?? ""
+// console.log(search)
+const url_query = MG_DOMAIN + '/s/' + search 
+
+const AxiosInst = axios.create()
+AxiosInst.get(url_query).then(
+  response => {
+    const html = response.data
+    // console.log(html)
+    const $ = cheerio.load(html)
+    const mangaList = $('li.cf')
+    for (const item of $(mangaList).toArray()) {
+      let id: string = $('a.bcover', item).attr('href') ?? ""
+      id = id.split('/').filter((a) => a != '').pop() ?? ""
+      let image: string = $('img', item).attr('src') ?? ""
+      image = "https:" + image
+      const title = $('a.bcover', item).attr('title')
+      const subtitle = $('a[href*="author"]', item).attr('title')
+      console.log(id)
+      console.log(image)
+      console.log(title)
+      console.log(subtitle)
+    }
+  }
+).catch(console.error)
 
 
-// let bodyHTML = '';
-// (async () => {
-//   const browser = await puppeteer.launch();
-//   const page = await browser.newPage();
-//   await page.goto(urlChpt);
-//   const bodyHTML = await page.evaluate(() => document.body.innerHTML);
-//   console.log(bodyHTML);
-// })()
-
-// (async () => {
-//   const browser = await puppeteer.launch();
-//   const page = await browser.newPage();
-//   await page.goto(urlChpt);
-//   const bodyHTML = await page.evaluate(() => document.body.innerHTML);
-//   console.log(bodyHTML);
-// })
-
-async function get_info(urlstr: string) {
+async function mgDetails(urlstr: string) {
   const puppeteer = require('puppeteer')
   const browser = await puppeteer.launch()
 
@@ -46,11 +54,12 @@ async function get_info(urlstr: string) {
   const pagenum = Number($('span#page').parent().text().slice(0, -1).split('/').pop())
   
   let outputHTML = '<html><head><title>all pages</title></head><body>'
-  for (let i = 3; i <= pagenum; i++) {
+  for (let i = 1; i <= pagenum; i++) {
     const urltmp = url0 + '#p=' + String(i)
-    const pagetmp = await browser.newPage()
-    await pagetmp.goto(urltmp, {waitUntil: 'load'})
-    const htmltmp = await pagetmp.evaluate(() => document.body.innerHTML)
+    // const pagetmp = await browser.newPage()
+    await page.goto(tmpurl, {waitUntil: 'load'})
+    await page.goto(urltmp, {waitUntil: 'load'})
+    const htmltmp = await page.evaluate(() => document.body.innerHTML)
     $ = cheerio.load(htmltmp)
     outputHTML += $('img#mangaFile').parent().html()
     // console.log(outputHTML)
@@ -65,17 +74,6 @@ async function get_info(urlstr: string) {
   console.log(pages)
 }
 
-get_info(urlChpt)
-// console.log(res)
-
-// AxiosInst.get(urlChpt).then(
-//   response => {
-//     const html = response.data
-//     console.log(html)
-//     const $ = cheerio.load(html)
-//     const addr = $('img#mangaFile').text()
-//     console.log(addr)
-//   }
-// ).catch(console.error)
+// mgDetails(urlChpt)
 
 

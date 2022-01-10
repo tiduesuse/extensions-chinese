@@ -107,11 +107,30 @@ export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId
     })
 }
 
-// export interface UpdatedManga {
-//     ids: string[];
-//     loadMore: boolean;
-// }
 
+export const parseSearch = ($: CheerioStatic): MangaTile[] => {
+    const mangaList = $('li.cf')
+    const manga: MangaTile[] = []
+    for (const item of $(mangaList).toArray()) {
+      let id: string = $('a.bcover', item).attr('href') ?? ""
+      id = id.split('/').filter((a) => a != '').pop() ?? ""
+      let image: string = $('img', item).attr('src') ?? ""
+      image = "https:" + image
+      const title: string = $('a.bcover', item).attr('title') ?? ""
+      const subtitle: string = $('a[href*="author"]', item).attr('title') ?? ""
+
+      manga.push(createMangaTile({
+        id: id,
+        image: image,
+        title: createIconText({ text: title }),
+        subtitleText: createIconText({ text: subtitle }),
+      }))
+    }
+
+    return manga
+}
+
+////// Need to work on
 export const parseUpdatedManga = ($: CheerioStatic, time: Date, ids: string[]): UpdatedManga => {
     const manga: string[] = []
     let loadMore = true
@@ -267,39 +286,6 @@ export const generateSearch = (query: SearchRequest): string => {
     return search
 }
 
-export const parseSearch = ($: CheerioStatic): MangaTile[] => {
-    const mangaList = $('.manga-list')
-    const manga: MangaTile[] = []
-    for (const item of $('.item', mangaList).toArray()) {
-        const id = $('a', item).first().attr('href')?.split('/').pop() ?? ''
-        const img = $('img', item)
-        const image = $(img).attr('src') ?? ''
-        const title = $(img).attr('title') ?? ''
-        const rate = $('.rate', item)
-        const rating = Number($(rate).find('i').text())
-        let author = ""
-
-        for (const field of $('.field', item).toArray()) {
-            const elem = $('b', field).first().text()
-            if (elem == 'Authors/Artists:') {
-                const authorCheerio = $('a', field).first()
-                author = $(authorCheerio).text()
-            }
-        }
-
-        const lastUpdate = $('ul', item).find('i').text()
-        manga.push(createMangaTile({
-            id,
-            image: image.replace(/(https:)?\/\//gi, 'https://'),
-            title: createIconText({ text: title }),
-            subtitleText: createIconText({ text: author }),
-            primaryText: createIconText({ text: rating.toString(), icon: 'star.fill' }),
-            secondaryText: createIconText({ text: lastUpdate, icon: 'clock.fill' })
-        }))
-    }
-
-    return manga
-}
 
 export const parseTags = ($: CheerioStatic): TagSection[] | null => {
     const tagSections: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: [] }),

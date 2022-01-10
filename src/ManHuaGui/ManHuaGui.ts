@@ -82,6 +82,7 @@ export class MManga extends Source {
 	}
 
 	async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
+    const tmpurl = 'https://www.bing.com'
     const puppeteer = require('puppeteer')
     const browser = await puppeteer.launch()
     const url0 = MG_DOMAIN + '/' + mid_addr + '/' + mangaId + '/' + chapterId + '.html'
@@ -91,40 +92,28 @@ export class MManga extends Source {
     let $ = this.cheerio.load(html0)
     const pagenum = Number($('span#page').parent().text().slice(0, -1).split('/').pop())
     let outputHTML = '<html><head><title>all pages</title></head><body>'
-    for (let i = 3; i <= pagenum; i++) {
+    for (let i = 1; i <= pagenum; i++) {
       const urltmp = url0 + '#p=' + String(i)
-      const pagetmp = await browser.newPage()
-      await pagetmp.goto(urltmp, {waitUntil: 'load'})
-      const htmltmp = await pagetmp.evaluate(() => document.body.innerHTML)
+      await page.goto(tmpurl, {waitUntil: 'load'})
+      await page.goto(urltmp, {waitUntil: 'load'})
+      const htmltmp = await page.evaluate(() => document.body.innerHTML)
       $ = this.cheerio.load(htmltmp)
       outputHTML += $('img#mangaFile').parent().html()
       // console.log(outputHTML)
     }
     outputHTML += '</body></html>'
     const $res = this.cheerio.load(outputHTML)
-		// const request = createRequestObject({
-		// 	url: `${MG_DOMAIN}/${mid_addr}/${mangaId}/${chapterId}`,
-		// 	method,
-    //   headers
-		// })
-    // // need to use puppeteer to grab all the pages and their html, then combine them into 
-    // // a big html data
-
-		// const response = await this.requestManager.schedule(request, 1)
-    // const $ = this.cheerio.load(response.data)
 		return parseChapterDetails($res, mangaId, chapterId)
 	}
 
-  ////// Need to work on
   async getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
-        const search = query.title?.replace(/ /g, '+').replace(/[’'´]/g, '%27') ?? ""
+        const search = query.title?.replace(/ /g, '%20') + '.html' ?? ""
         let manga: MangaTile[] = []
 
         const request = createRequestObject({
-            url: `${FURYOSQUAD_DOMAIN}/search`,
-            method: 'POST',
-            headers,
-            data: `search=${search}`
+            url: `${MG_DOMAIN}/s/${search}`,
+            method,
+            headers
         })
     
         const response = await this.requestManager.schedule(request, 1)
@@ -138,6 +127,7 @@ export class MManga extends Source {
         })    
     }
 
+  ////// Need to work on
 	async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
 		const section1 = createHomeSection({ id: 'latest_updated', title: '最新更新'})
 		const section2 = createHomeSection({ id: 'on_going', title: '连载漫画'})
