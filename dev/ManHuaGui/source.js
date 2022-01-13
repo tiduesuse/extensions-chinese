@@ -44370,7 +44370,8 @@ exports.parseChapters = ($, mangaId) => {
     const allChapters = $('a.status0');
     const chapters = [];
     for (let chapter of $(allChapters).toArray()) {
-        const id = (_a = MG_DOMAIN + $(chapter).attr('href')) !== null && _a !== void 0 ? _a : '';
+        let id = (_a = MG_DOMAIN + $(chapter).attr('href')) !== null && _a !== void 0 ? _a : '';
+        id = id.slice(0, -5);
         const name = (_b = $(chapter).attr('title')) !== null && _b !== void 0 ? _b : '';
         let chapStr = (_c = id.split('/').pop()) !== null && _c !== void 0 ? _c : '';
         chapStr = (_d = chapStr.split('.')[0]) !== null && _d !== void 0 ? _d : '';
