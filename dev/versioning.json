@@ -1,1 +1,1 @@
-{"buildTime":"2022-01-13T03:59:41.597Z","sources":[]}
+{"buildTime":"2022-01-13T04:13:06.192Z","sources":[{"id":"ManHuaGui","name":"ManHuaGui","author":"Tiduesuse","desc":"Extension that pulls manga from ManHuaGui (Chinese)","website":"https://github.com/Tiduesuse","contentRating":"MATURE","version":"1.0.0","icon":"icon.png","tags":[{"text":"Chinese","type":"info"},{"text":"Notifications","type":"success"}],"websiteBaseURL":"https://www.manhuagui.com"}]}

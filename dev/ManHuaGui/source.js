@@ -44170,7 +44170,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MManga = exports.MMangaInfo = void 0;
+exports.ManHuaGui = exports.ManHuaGuiInfo = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const ManHuaGuiParser_1 = require("./ManHuaGuiParser");
 const MG_DOMAIN = 'https://www.manhuagui.com';
@@ -44180,7 +44180,7 @@ const mid_addr = 'comic';
 const headers = {
     'Host': 'www.manhuagui.com'
 };
-exports.MMangaInfo = {
+exports.ManHuaGuiInfo = {
     version: '1.0.0',
     name: MG_NAME,
     icon: 'icon.png',
@@ -44200,7 +44200,7 @@ exports.MMangaInfo = {
         }
     ]
 };
-class MManga extends paperback_extensions_common_1.Source {
+class ManHuaGui extends paperback_extensions_common_1.Source {
     constructor() {
         super(...arguments);
         this.requestManager = createRequestManager({
@@ -44308,7 +44308,7 @@ class MManga extends paperback_extensions_common_1.Source {
         });
     }
 }
-exports.MManga = MManga;
+exports.ManHuaGui = ManHuaGui;
 
 },{"./ManHuaGuiParser":281,"paperback-extensions-common":96,"puppeteer":151}],281:[function(require,module,exports){
 "use strict";
