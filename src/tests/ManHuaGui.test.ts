@@ -4,14 +4,14 @@ import {
     SearchRequest,
     Source
 } from 'paperback-extensions-common'
-import { MManga } from '../ManHuaGui/ManHuaGui'
+import { ManHuaGui } from '../ManHuaGui/ManHuaGui'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 
 describe('ManHuaGui Tests', () => {
 
     const wrapper: APIWrapper = new APIWrapper()
-    const source: Source = new MManga(cheerio)
+    const source: Source = new ManHuaGui(cheerio)
     const expect = chai.expect
     chai.use(chaiAsPromised)
 

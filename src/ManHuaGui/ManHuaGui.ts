@@ -24,7 +24,7 @@ const headers = {
   'Host': 'www.manhuagui.com'
 }
 
-export const MMangaInfo: SourceInfo = {
+export const ManHuaGuiInfo: SourceInfo = {
 	version: '1.0.0',
 	name: MG_NAME,
 	icon: 'icon.png',
@@ -45,7 +45,7 @@ export const MMangaInfo: SourceInfo = {
 	]
 }
 
-export class MManga extends Source {
+export class ManHuaGui extends Source {
   requestManager: RequestManager = createRequestManager({
     requestsPerSecond: 3 
   });
