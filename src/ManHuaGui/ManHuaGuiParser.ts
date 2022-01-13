@@ -79,7 +79,7 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
     let chapStr: string = id.split('/').pop() ?? ''
     chapStr = chapStr.split('.')[0] ?? ''
     const chapNum: number = Number(chapStr)
-    const time: Date = new Date('')
+    const time: Date = new Date('12 Apr. 2020')
     chapters.push(createChapter({
       id,
       mangaId,
