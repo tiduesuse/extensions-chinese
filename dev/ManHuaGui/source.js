@@ -44181,7 +44181,7 @@ const headers = {
     'Host': 'www.manhuagui.com'
 };
 exports.ManHuaGuiInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: MG_NAME,
     icon: 'icon.png',
     author: 'Tiduesuse',
@@ -44376,7 +44376,7 @@ exports.parseChapters = ($, mangaId) => {
         let chapStr = (_c = id.split('/').pop()) !== null && _c !== void 0 ? _c : '';
         chapStr = (_d = chapStr.split('.')[0]) !== null && _d !== void 0 ? _d : '';
         const chapNum = Number(chapStr);
-        const time = new Date('');
+        const time = new Date('12 Apr. 2020');
         chapters.push(createChapter({
             id,
             mangaId,
