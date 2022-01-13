@@ -78,13 +78,9 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
     const name: string = $(chapter).attr('title') ?? ''
     let chapStr: string = id.split('/').pop() ?? ''
     chapStr = chapStr.split('.')[0] ?? ''
-    const chapNum: number = Number(chapStr) / 10000
+    const chapNum: number = Number(chapStr) / 100
     const time: Date = new Date('12 Apr. 2020')
-    // console.log(id)
-    // console.log(mangaId)
-    // console.log(name)
-    // console.log(chapNum)
-    // console.log(time)
+
     chapters.push(createChapter({
       id,
       mangaId,
@@ -111,6 +107,20 @@ export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId
       longStrip: false
   })
 }
+
+// export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId: string): ChapterDetails => {
+//   const pages = $('img#mangaFile').map(
+//     function(this: Text) {
+//       return $(this).attr('src')
+//     }
+//   ).get()
+//   return createChapterDetails({
+//       id: chapterId,
+//       mangaId: mangaId,
+//       pages: pages,
+//       longStrip: false
+//   })
+// }
 
 export const parseSearch = ($: CheerioStatic): MangaTile[] => {
   const mangaList = $('li.cf')
