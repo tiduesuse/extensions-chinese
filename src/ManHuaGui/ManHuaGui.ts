@@ -25,7 +25,7 @@ const headers = {
 }
 
 export const ManHuaGuiInfo: SourceInfo = {
-	version: '1.0.0',
+	version: '1.0.1',
 	name: MG_NAME,
 	icon: 'icon.png',
 	author: 'Tiduesuse',
