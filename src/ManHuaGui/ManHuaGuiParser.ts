@@ -73,13 +73,13 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
   const chapters: Chapter[] = []
 
   for (let chapter of $(allChapters).toArray()) {
-    const id: string = MG_DOMAIN + $(chapter).attr('href') ?? ''
+    let id: string = MG_DOMAIN + $(chapter).attr('href') ?? ''
+    id = id.slice(0, -5)
     const name: string = $(chapter).attr('title') ?? ''
     let chapStr: string = id.split('/').pop() ?? ''
     chapStr = chapStr.split('.')[0] ?? ''
     const chapNum: number = Number(chapStr)
     const time: Date = new Date('')
-
     chapters.push(createChapter({
       id,
       mangaId,
