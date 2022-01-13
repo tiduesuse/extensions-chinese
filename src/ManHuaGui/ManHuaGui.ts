@@ -6,7 +6,6 @@ import {
 	HomeSection, 
 	SearchRequest, 
 	TagSection, 
-	MangaUpdates, 
 	PagedResults, 
 	SourceInfo, 
   ContentRating,
@@ -15,7 +14,7 @@ import {
   MangaTile} 
 from "paperback-extensions-common"
 
-import { generateSearch, parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, parseViewMore } from "./ManHuaGuiParser"
+import { parseMangaDetails, parseChapters, parseChapterDetails, parseSearch, parseHomeSections, parseTags } from "./ManHuaGuiParser"
 
 const MG_DOMAIN = 'https://www.manhuagui.com'
 const MG_NAME = 'ManHuaGui'
@@ -85,11 +84,12 @@ export class MManga extends Source {
     const tmpurl = 'https://www.bing.com'
     const puppeteer = require('puppeteer')
     const browser = await puppeteer.launch()
-    const url0 = MG_DOMAIN + '/' + mid_addr + '/' + mangaId + '/' + chapterId + '.html'
+    const url0 = chapterId
     const page = await browser.newPage()
     await page.goto(url0, {waitUntil: 'load'})
     const html0 = await page.evaluate(() => document.body.innerHTML)
     let $ = this.cheerio.load(html0)
+    // console.log(pagenum)
     const pagenum = Number($('span#page').parent().text().slice(0, -1).split('/').pop())
     let outputHTML = '<html><head><title>all pages</title></head><body>'
     for (let i = 1; i <= pagenum; i++) {
@@ -127,43 +127,30 @@ export class MManga extends Source {
         })    
     }
 
-  ////// Need to work on
 	async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
 		const section1 = createHomeSection({ id: 'latest_updated', title: '最新更新'})
 		const section2 = createHomeSection({ id: 'on_going', title: '连载漫画'})
 		const section3 = createHomeSection({ id: 'fishied', title: '完结漫画'})
-		const sections = [section1, section2, section3]
+		const section4 = createHomeSection({ id: 'new', title: '新番漫画'})
+		const sections = [section1, section2, section3, section4]
 
-		const request = createRequestObject({url: `${MP_DOMAIN}`, method})
+		const request = createRequestObject({url: `${MG_DOMAIN}`, method})
 		const response = await this.requestManager.schedule(request, 1)
 		const $ = this.cheerio.load(response.data)
 		parseHomeSections($, sections, sectionCallback)
 	}
 
-  ///////// need to change
-	async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void>{
+  async getSearchTags(): Promise<TagSection[]> {
     const request = createRequestObject({
-            url: `${MG_DOMAIN}`,
-            method,
-            headers
-        })
+      url: `${MG_DOMAIN}/list`,
+      method,
+      headers
+    })
 
-        const response = await this.requestManager.schedule(request, 1)
-        const $ = this.cheerio.load(response.data)
+    const response = await this.requestManager.schedule(request, 1)
+    const $ = this.cheerio.load(response.data)
+    
+    return parseTags($)
+  }
 
-        const updatedManga: string[] = []
-        for (const manga of $('table tr').toArray()) {
-            let id = $('.fs-comic-title a', manga).attr('href')
-            let mangaDate = parseDate($('.fs-table-chap-date .fs-chap-date', manga).text().trim() ?? '')
-
-            if (!id) continue
-            if (mangaDate > time) {
-                if (ids.includes(id)) {
-                    updatedManga.push(id)
-                }
-            }
-        }
-
-        mangaUpdatesFoundCallback(createMangaUpdates({ids: updatedManga}))
-    }
 }

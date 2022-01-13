@@ -1,2 +1,0 @@
-1. check if the original RequestMananger can access dynamic image info
-2. see if can use goto to save time?
