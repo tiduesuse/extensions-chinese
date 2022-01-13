@@ -1,6 +1,6 @@
 {
   "name": "tiduesuse-extensions",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Multiple Chinese sources for Paperback",
   "baseURL": "https://tiduesuse.github.io/extensions-chinese/dev",
   "scripts": {
