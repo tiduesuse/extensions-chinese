@@ -402,7 +402,7 @@ const headers1 = {
     'Host': 'www.webmota.com'
 };
 exports.BaoziMangaInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: MG_NAME,
     icon: 'icon.jpg',
     author: 'Tomas Way',
@@ -470,23 +470,25 @@ class BaoziManga extends paperback_extensions_common_1.Source {
         });
     }
     getSearchResults(query, metadata) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         return __awaiter(this, void 0, void 0, function* () {
             // if (!metadata.manga) {
-            const ori = (_b = (_a = query.title) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : "";
-            const search = (_c = ori.replace(/ /g, '+').replace(/[’'´]/g, '%27')) !== null && _c !== void 0 ? _c : "";
+            const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
+            const ori = (_c = (_b = query.title) === null || _b === void 0 ? void 0 : _b.trim()) !== null && _c !== void 0 ? _c : "";
+            const search = (_d = ori.replace(/ /g, '+').replace(/[’'´]/g, '%27')) !== null && _d !== void 0 ? _d : "";
             let addr = '';
             if (search.length > 0) {
                 addr = `${MG_DOMAIN}/search?q=${search}`;
             }
-            else if (query.includedTags && ((_d = query.includedTags) === null || _d === void 0 ? void 0 : _d.length) != 0) {
+            else if (query.includedTags && ((_e = query.includedTags) === null || _e === void 0 ? void 0 : _e.length) != 0) {
                 const tagStr = BaoziMangaParser_1.parseMultiTags(query.includedTags);
                 addr = `${MG_DOMAIN}/classify?${tagStr}`;
             }
             else {
                 addr = `${MG_DOMAIN}/classify`;
             }
-            const addr1 = encodeURI(addr);
+            let addr1 = `${addr}&page=${page}`;
+            addr1 = encodeURI(addr1);
             const request = createRequestObject({
                 url: addr1,
                 method,
@@ -501,7 +503,7 @@ class BaoziManga extends paperback_extensions_common_1.Source {
             // }
             return createPagedResults({
                 results: BaoziMangaParser_1.parseSearch($),
-                metadata
+                metadata: { page: page + 1 }
                 // metadata: {
                 //   manga: metadata.manga,
                 //   offset: metadata.offset + 100
@@ -511,7 +513,7 @@ class BaoziManga extends paperback_extensions_common_1.Source {
     }
     getHomePageSections(sectionCallback) {
         return __awaiter(this, void 0, void 0, function* () {
-            const section1 = createHomeSection({ id: '熱門漫畫', title: '熱門漫畫', type: paperback_extensions_common_1.HomeSectionType.featured });
+            const section1 = createHomeSection({ id: '熱門漫畫', title: '熱門漫畫', type: paperback_extensions_common_1.HomeSectionType.featured, view_more: true });
             const section2 = createHomeSection({ id: '推薦漫畫', title: '推薦漫畫', view_more: true });
             const section3 = createHomeSection({ id: '韓漫漫畫', title: '韓漫漫畫', view_more: true });
             const section4 = createHomeSection({ id: '大女主漫畫', title: '大女主漫畫', view_more: true });
@@ -550,8 +552,8 @@ class BaoziManga extends paperback_extensions_common_1.Source {
         });
     }
     getViewMoreItems(homepageSectionId, metadata) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            // if (!metadata.manga) {
             const request0 = createRequestObject({
                 url: `${MG_DOMAIN}`,
                 method,
@@ -560,20 +562,25 @@ class BaoziManga extends paperback_extensions_common_1.Source {
             const response0 = yield this.requestManager.schedule(request0, 1);
             const $0 = this.cheerio.load(response0.data);
             const env = $0('.index-recommend-items:contains(' + homepageSectionId + ')');
-            const request = createRequestObject({
-                url: MG_DOMAIN + $0('.more', env).attr('href'),
-                method,
-                headers
-            });
-            const response = yield this.requestManager.schedule(request, 1);
-            const $ = this.cheerio.load(response.data);
-            // metadata = {
-            //   manga: parseViewMore($, homepageSectionId),
-            //   offset: 0
-            // }
-            // }
+            const addr = (_a = MG_DOMAIN + $0('.more', env).attr('href')) !== null && _a !== void 0 ? _a : '';
+            let manga = [];
+            if (addr.length > 0) {
+                const request = createRequestObject({
+                    url: MG_DOMAIN + $0('.more', env).attr('href'),
+                    method,
+                    headers
+                });
+                const response = yield this.requestManager.schedule(request, 1);
+                const $ = this.cheerio.load(response.data);
+                manga = BaoziMangaParser_1.parseSearch($);
+            }
+            else {
+                for (const item of $0('.comics-card', env).toArray()) {
+                    manga.push(BaoziMangaParser_1.parseMangaItem($0, item));
+                }
+            }
             return createPagedResults({
-                results: BaoziMangaParser_1.parseSearch($),
+                results: manga,
                 metadata
             });
         });
@@ -584,7 +591,7 @@ exports.BaoziManga = BaoziManga;
 },{"./BaoziMangaParser":49,"paperback-extensions-common":5}],49:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseMultiTags = exports.parseTags = exports.tagDict = exports.parseHomeSections = exports.parseSearch = exports.parseChapterDetails = exports.parseChapters = exports.parseMangaDetails = void 0;
+exports.parseMultiTags = exports.parseTags = exports.tagDict = exports.parseHomeSections = exports.parseMangaItem = exports.parseSearch = exports.parseChapterDetails = exports.parseChapters = exports.parseMangaDetails = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const MG_DOMAIN = 'https://www.baozimh.com';
 const MG_DOMAIN1 = 'https://www.webmota.com';
@@ -671,12 +678,12 @@ exports.parseSearch = ($) => {
     const env = $('.comics-card');
     const manga = [];
     for (const item of $(env).toArray()) {
-        manga.push(parseMangaItem($, item));
+        manga.push(exports.parseMangaItem($, item));
     }
     return manga;
 };
 // parse each mange item
-const parseMangaItem = ($, item) => {
+exports.parseMangaItem = ($, item) => {
     var _a, _b, _c;
     let id = (_a = $('.comics-card__poster', item).attr('href')) !== null && _a !== void 0 ? _a : "";
     id = (_b = id.split('/').pop()) !== null && _b !== void 0 ? _b : "";
@@ -695,7 +702,7 @@ const parseMangaItem = ($, item) => {
 const parseSection = ($, sec) => {
     const res = [];
     for (const item of $('.comics-card', sec).toArray()) {
-        const manga = parseMangaItem($, item);
+        const manga = exports.parseMangaItem($, item);
         res.push(manga);
     }
     return res;
