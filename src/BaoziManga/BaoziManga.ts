@@ -40,7 +40,7 @@ const headers1 = {
 }
 
 export const BaoziMangaInfo: SourceInfo = {
-	version: '0.6.0',
+	version: '0.6.1',
 	name: MG_NAME,
 	icon: 'icon.png',
 	author: 'Tomas Way',
@@ -107,37 +107,38 @@ export class BaoziManga extends Source {
 	}
 
   async getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
-    if (!metadata.manga) {
-      const ori = query.title?.trim() ?? ""
-      const search = ori.replace(/ /g, '+').replace(/[’'´]/g, '%27') ?? ""
-      let addr = ''
-      if (search.length > 0) {
-        addr = `${MG_DOMAIN}/search?q=${search}`
-      } else if (query.includedTags && query.includedTags?.length != 0) {
-        const tagStr = parseMultiTags(query.includedTags)
-        addr = `${MG_DOMAIN}/classify?${tagStr}`
-      } else {
-        addr = `${MG_DOMAIN}/classify`
-      }
-      const addr1 = encodeURI(addr)
-      const request = createRequestObject({
-          url: addr1,
-          method,
-          headers
-      })
-      const response = await this.requestManager.schedule(request, 1)
-      const $ = this.cheerio.load(response.data)
-      metadata = {
-        manga: parseSearch($),
-        offset: 0
-      }
+    // if (!metadata.manga) {
+    const ori = query.title?.trim() ?? ""
+    const search = ori.replace(/ /g, '+').replace(/[’'´]/g, '%27') ?? ""
+    let addr = ''
+    if (search.length > 0) {
+      addr = `${MG_DOMAIN}/search?q=${search}`
+    } else if (query.includedTags && query.includedTags?.length != 0) {
+      const tagStr = parseMultiTags(query.includedTags)
+      addr = `${MG_DOMAIN}/classify?${tagStr}`
+    } else {
+      addr = `${MG_DOMAIN}/classify`
     }
+    const addr1 = encodeURI(addr)
+    const request = createRequestObject({
+        url: addr1,
+        method,
+        headers
+    })
+    const response = await this.requestManager.schedule(request, 1)
+    const $ = this.cheerio.load(response.data)
+      // metadata = {
+      //   manga: parseSearch($),
+      //   offset: 0
+      // }
+    // }
     return createPagedResults({
-      results: metadata.manga.slice(metadata.offset, metadata.offset + 100),
-      metadata: {
-        manga: metadata.manga,
-        offset: metadata.offset + 100
-      }
+      results: parseSearch($),
+      metadata
+      // metadata: {
+      //   manga: metadata.manga,
+      //   offset: metadata.offset + 100
+      // }
     })
   }
 
@@ -182,26 +183,23 @@ export class BaoziManga extends Source {
   }
 
   async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
-    if (!metadata.manga) {
-      const request = createRequestObject({
-        url: `${MG_DOMAIN}`,
-        method,
-        headers
-      })
-      const response = await this.requestManager.schedule(request, 1)
-      const $ = this.cheerio.load(response.data)
-      metadata = {
-        manga: parseViewMore($, homepageSectionId),
-        offset: 0
-      }
-    }
+    // if (!metadata.manga) {
+    const request = createRequestObject({
+      url: `${MG_DOMAIN}`,
+      method,
+      headers
+    })
+    const response = await this.requestManager.schedule(request, 1)
+    const $ = this.cheerio.load(response.data)
+    // metadata = {
+    //   manga: parseViewMore($, homepageSectionId),
+    //   offset: 0
+    // }
+    // }
 
     return createPagedResults({
-      results: metadata.manga.slice(metadata.offset, metadata.offset + 100),
-      metadata: {
-        manga: metadata.manga,
-        offset: metadata.offset + 100
-      }
+      results: parseViewMore($, homepageSectionId),
+      metadata
     })
   }
 }
