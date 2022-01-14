@@ -404,7 +404,7 @@ const headers1 = {
 exports.BaoziMangaInfo = {
     version: '1.0.0',
     name: MG_NAME,
-    icon: 'icon.png',
+    icon: 'icon.jpg',
     author: 'Tomas Way',
     authorWebsite: 'https://github.com/Tiduesuse',
     description: 'Extension that pulls manga from ' + MG_NAME + ' (Chinese)',
