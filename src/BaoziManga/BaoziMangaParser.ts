@@ -111,9 +111,9 @@ const parseMangaItem = ($: CheerioStatic, item: CheerioElement): MangaTile => {
   id = id.split('/').pop() ?? ""
   const image: string = $('amp-img', item).attr('src') ?? ""
   const title = $('.comics-card__title', item).text()
-  console.log(id)
-  console.log(image)
-  console.log(title)
+  // console.log(id)
+  // console.log(image)
+  // console.log(title)
   return createMangaTile({
     id: id,
     image: image,

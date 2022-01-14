@@ -1,7 +1,7 @@
 {
-  "name": "tiduesuse-extensions",
-  "version": "0.5.1",
-  "repositoryName": "Tiduesuse's Extensions",
+  "name": "tomasway-extensions",
+  "version": "0.6.0",
+  "repositoryName": "TomasWay's Extensions",
   "description": "Multiple Chinese sources for Paperback",
   "baseURL": "https://tiduesuse.github.io/extensions-chinese/dev",
   "scripts": {
@@ -9,7 +9,7 @@
     "bundle": "paperback bundle",
     "serve": "paperback serve -p 8000"
   },
-  "author": "Tiduesuse",
+  "author": "Tomas Way",
   "license": "MIT",
   "dependencies": {
     "@types/chai": "^4.3.0",

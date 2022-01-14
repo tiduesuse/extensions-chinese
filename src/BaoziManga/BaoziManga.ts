@@ -1,17 +1,19 @@
 import { 
-	Source, 
-	Manga, 
-	Chapter, 
-	ChapterDetails, 
-	HomeSection, 
-	SearchRequest, 
-	TagSection, 
-	PagedResults, 
-	SourceInfo, 
-  ContentRating,
+  Source,
+  Manga,
+  Chapter,
+  ChapterDetails,
+  HomeSection,
+  SearchRequest,
+  TagSection,
+  PagedResults,
+  SourceInfo,
+  MangaUpdates,
+  TagType,
   RequestManager,
-	TagType,
-  MangaTile} 
+  ContentRating,
+  MangaTile
+} 
 from "paperback-extensions-common"
 
 import { 
@@ -38,10 +40,10 @@ const headers1 = {
 }
 
 export const BaoziMangaInfo: SourceInfo = {
-	version: '0.5.1',
+	version: '0.6.0',
 	name: MG_NAME,
 	icon: 'icon.png',
-	author: 'Tiduesuse',
+	author: 'Tomas Way',
 	authorWebsite: 'https://github.com/Tiduesuse',
 	description: 'Extension that pulls manga from ' + MG_NAME + ' (Chinese)',
   contentRating: ContentRating.MATURE,
@@ -105,7 +107,7 @@ export class BaoziManga extends Source {
 	}
 
   async getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
-    if (!metadata) {
+    if (!metadata.manga) {
       const ori = query.title?.trim() ?? ""
       const search = ori.replace(/ /g, '+').replace(/[’'´]/g, '%27') ?? ""
       let addr = ''
@@ -131,12 +133,12 @@ export class BaoziManga extends Source {
       }
     }
     return createPagedResults({
-        results: metadata.manga.slice(metadata.offset, metadata.offset + 100),
-        metadata: {
-          manga: metadata.manga,
-          offset: metadata.offset + 100
-        }
-    })    
+      results: metadata.manga.slice(metadata.offset, metadata.offset + 100),
+      metadata: {
+        manga: metadata.manga,
+        offset: metadata.offset + 100
+      }
+    })
   }
 
 	async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
@@ -180,7 +182,7 @@ export class BaoziManga extends Source {
   }
 
   async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
-    if (!metadata) {
+    if (!metadata.manga) {
       const request = createRequestObject({
         url: `${MG_DOMAIN}`,
         method,

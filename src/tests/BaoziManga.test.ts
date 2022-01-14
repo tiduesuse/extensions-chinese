@@ -65,7 +65,7 @@ describe('BaoziManga Tests', () => {
 
     it('Testing search', async () => {
         const testSearch: SearchRequest = {
-            title: 'one piece',
+            title: '海贼王',
             parameters: {}
         }
 
