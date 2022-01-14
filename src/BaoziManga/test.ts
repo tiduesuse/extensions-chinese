@@ -36,23 +36,30 @@ const request = `${MG_DOMAIN1}/search?q=${search}`
 const AxiosInst = axios.create()
 const homepageSectionId = '玄幻漫畫'
 //const homepageSectionId = '韓漫漫畫'
-AxiosInst.get(MG_DOMAIN).then(
+AxiosInst.get(url).then(
   response => {
     const html = response.data
     const $ = cheerio.load(html)
     // const env = $('.pure-g')
-    const env = $('.index-recommend-items:contains(' + homepageSectionId + ')')
-    const sec = $(env)
-    // console.log(sec.text())
-    for (const item of $('.comics-card', env).toArray()){
-      let id: string = $('.comics-card__poster', item).attr('href') ?? ""
-      id = id.split('/').pop() ?? ""
-      const image = $('amp-img', item).attr('src')
-      const title = $('.comics-card__title', item).text()
-      console.log(id)
-      console.log(image)
-      console.log(title)
-    }
+    const date = $('em', ':contains(日 更新)').text().trim()
+    const re = /[年月日() 更新]/
+    const datepts = date.split(re).filter((x) => x.trim() != '').join('/')
+    let dtime = new Date(datepts)
+    const dtime1 = new Date()
+    dtime1.setDate(dtime.getDate() - 7)
+    // const dtime1: Date = new Date().setDate(dtime.getDate() - 7)
+    console.log(dtime)
+    console.log(dtime1)
+    // // console.log(sec.text())
+    // for (const item of $('.comics-card', env).toArray()){
+    //   let id: string = $('.comics-card__poster', item).attr('href') ?? ""
+    //   id = id.split('/').pop() ?? ""
+    //   const image = $('amp-img', item).attr('src')
+    //   const title = $('.comics-card__title', item).text()
+    //   console.log(id)
+    //   console.log(image)
+    //   console.log(title)
+    // }
   }
 ).catch(console.error)
 

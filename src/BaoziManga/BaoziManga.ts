@@ -9,11 +9,9 @@ import {
   TagSection,
   PagedResults,
   SourceInfo,
-  MangaUpdates,
   TagType,
   RequestManager,
   ContentRating,
-  MangaTile
 } 
 from "paperback-extensions-common"
 
@@ -24,8 +22,7 @@ import {
   parseSearch, 
   parseHomeSections, 
   parseTags, 
-  parseMultiTags,
-  parseViewMore
+  parseMultiTags
 } from "./BaoziMangaParser"
 
 // const MG_DOMAIN = 'https://www.webmota.com'
@@ -41,7 +38,7 @@ const headers1 = {
 }
 
 export const BaoziMangaInfo: SourceInfo = {
-	version: '0.9.1',
+	version: '0.9.2',
 	name: MG_NAME,
 	icon: 'icon.png',
 	author: 'Tomas Way',
@@ -185,8 +182,16 @@ export class BaoziManga extends Source {
 
   async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
     // if (!metadata.manga) {
-    const request = createRequestObject({
+    const request0 = createRequestObject({
       url: `${MG_DOMAIN}`,
+      method,
+      headers
+    })
+    const response0 = await this.requestManager.schedule(request0, 1)
+    const $0 = this.cheerio.load(response0.data)
+    const env = $0('.index-recommend-items:contains(' + homepageSectionId + ')')
+    const request = createRequestObject({
+      url: MG_DOMAIN + $0('.more', env).attr('href'),
       method,
       headers
     })
@@ -199,7 +204,7 @@ export class BaoziManga extends Source {
     // }
 
     return createPagedResults({
-      results: parseViewMore($, homepageSectionId),
+      results: parseSearch($),
       metadata
     })
   }
