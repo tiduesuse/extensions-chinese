@@ -1,7 +1,6 @@
 # Paperback Sources for Chinese Language
 ## About Sources
-Base URL:
-tiduesuse.github.io/extensions-cn/master
+Base URL: https://tiduesuse.github.io/extensions-cn/master
 
 Currently it contains the following sources:
 1. BaoziManga: www.baozimh.com.
