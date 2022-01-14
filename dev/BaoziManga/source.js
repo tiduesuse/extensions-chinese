@@ -402,7 +402,7 @@ const headers1 = {
     'Host': 'www.webmota.com'
 };
 exports.BaoziMangaInfo = {
-    version: '0.9.5',
+    version: '0.9.6',
     name: MG_NAME,
     icon: 'icon.png',
     author: 'Tomas Way',
@@ -643,15 +643,14 @@ exports.parseChapters = ($, mangaId) => {
         const id = MG_DOMAIN1 + '/' + $('a', chapter).attr('href');
         const name = $(chapter).text();
         const chapNum = (_a = Number(id.split('=').pop())) !== null && _a !== void 0 ? _a : 0;
-        let time = new Date();
-        time.setDate(baseTime.getDate() - 7);
+        const time = new Date(baseTime.getTime() - (7 * 24 * 3600000));
         chapters.push(createChapter({
             id,
             mangaId,
             name,
             langCode: paperback_extensions_common_1.LanguageCode.CHINEESE,
             chapNum,
-            time: time
+            time
         }));
         baseTime.setDate(baseTime.getDate() - 7);
     }
