@@ -1,5 +1,1 @@
-<<<<<<< HEAD:master/versioning.json
-{"buildTime":"2022-01-14T20:01:11.460Z","sources":[{"id":"BaoziManga","name":"BaoziManga","author":"Tomas Way","desc":"Extension that pulls manga from BaoziManga (Chinese)","website":"https://github.com/Tiduesuse","contentRating":"MATURE","version":"1.0.0","icon":"icon.jpg","tags":[{"text":"Chinese","type":"info"},{"text":"Notifications","type":"success"}],"websiteBaseURL":"https://www.baozimh.com"}]}
-=======
-{"buildTime":"2022-01-14T19:57:23.802Z","sources":[{"id":"BaoziManga","name":"BaoziManga","author":"Tomas Way","desc":"Extension that pulls manga from BaoziManga (Chinese)","website":"https://github.com/Tiduesuse","contentRating":"MATURE","version":"1.0.0","icon":"icon.jpg","tags":[{"text":"Chinese","type":"info"},{"text":"Notifications","type":"success"}],"websiteBaseURL":"https://www.baozimh.com"}]}
->>>>>>> c2f7aa89dd79f92c9c5f82373376183955954ffa:versioning.json
+{"buildTime":"2022-01-14T20:15:20.568Z","sources":[{"id":"BaoziManga","name":"BaoziManga","author":"Tomas Way","desc":"Extension that pulls manga from BaoziManga (Chinese)","website":"https://github.com/Tiduesuse","contentRating":"MATURE","version":"1.0.0","icon":"icon.jpg","tags":[{"text":"Chinese","type":"info"},{"text":"Notifications","type":"success"}],"websiteBaseURL":"https://www.baozimh.com"}]}
