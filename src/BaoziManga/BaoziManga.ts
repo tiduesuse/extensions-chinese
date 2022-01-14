@@ -4,6 +4,7 @@ import {
   Chapter,
   ChapterDetails,
   HomeSection,
+  HomeSectionType,
   SearchRequest,
   TagSection,
   PagedResults,
@@ -143,15 +144,15 @@ export class BaoziManga extends Source {
   }
 
 	async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
-		const section1 = createHomeSection({ id: '熱門漫畫', title: '熱門漫畫'})
-		const section2 = createHomeSection({ id: '推薦漫畫', title: '推薦漫畫'})
-		const section3 = createHomeSection({ id: '韓漫漫畫', title: '韓漫漫畫'})
-		const section4 = createHomeSection({ id: '大女主漫畫', title: '大女主漫畫'})
-		const section5 = createHomeSection({ id: '少年漫畫', title: '少年漫畫'})
-		const section6 = createHomeSection({ id: '戀愛漫畫', title: '戀愛漫畫'})
-		const section7 = createHomeSection({ id: '玄幻漫畫', title: '玄幻漫畫'})
-		const section8 = createHomeSection({ id: '最新上架', title: '最新上架'})
-		const section9 = createHomeSection({ id: '最近更新', title: '最近更新'})
+		const section1 = createHomeSection({ id: '熱門漫畫', title: '熱門漫畫', type: HomeSectionType.featured})
+		const section2 = createHomeSection({ id: '推薦漫畫', title: '推薦漫畫', view_more: true})
+		const section3 = createHomeSection({ id: '韓漫漫畫', title: '韓漫漫畫', view_more: true})
+		const section4 = createHomeSection({ id: '大女主漫畫', title: '大女主漫畫', view_more: true})
+		const section5 = createHomeSection({ id: '少年漫畫', title: '少年漫畫', view_more: true})
+		const section6 = createHomeSection({ id: '戀愛漫畫', title: '戀愛漫畫', view_more: true})
+		const section7 = createHomeSection({ id: '玄幻漫畫', title: '玄幻漫畫', view_more: true})
+		const section8 = createHomeSection({ id: '最新上架', title: '最新上架', view_more: true})
+		const section9 = createHomeSection({ id: '最近更新', title: '最近更新', view_more: true})
 		const sections = [
       section1, 
       section2, 
