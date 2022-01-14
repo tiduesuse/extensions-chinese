@@ -1,9 +1,9 @@
 {
   "name": "tomasway-extensions",
-  "version": "1.0.0",
-  "repositoryName": "TomasWay's Extensions",
+  "version": "1.0.1",
+  "repositoryName": "TomasWay's Extensions Beta",
   "description": "Multiple Chinese sources for Paperback",
-  "baseURL": "https://tiduesuse.github.io/extensions-cn/master",
+  "baseURL": "https://tiduesuse.github.io/extensions-cn/dev",
   "scripts": {
     "test": "node_modules/.bin/mocha --timeout 300000 -r ts-node/register src/**/*.test.ts",
     "bundle": "paperback bundle",
