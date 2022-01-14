@@ -65,13 +65,13 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
   const date = $('em', ':contains(日 更新)').text().trim()
   const re = /[年月日() 更新]/
   const datepts = date.split(re).filter((x) => x.trim() != '').join('/')
-  let baseTime: Date = new Date(datepts)
+  const time: Date = new Date(datepts)
 
   for (let chapter of $(allChapters).toArray()) {
     const id = MG_DOMAIN1 + '/' + $('a',chapter).attr('href')
     const name = $(chapter).text()
     const chapNum = Number(id.split('=').pop()) ?? 0
-    const time: Date = new Date(baseTime.getTime() - (7 * 24 * 3600000))
+    // const time: Date = new Date(baseTime.getTime() - (7 * 24 * 3600000))
     chapters.push(createChapter({
       id,
       mangaId,
@@ -80,7 +80,7 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
       chapNum,
       time
     }))
-    baseTime.setDate(baseTime.getDate() - 7)
+    // baseTime.setDate(baseTime.getDate() - 7)
   }
   return chapters
 }
