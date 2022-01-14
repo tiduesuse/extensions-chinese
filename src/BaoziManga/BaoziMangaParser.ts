@@ -65,22 +65,23 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
   const date = $('em', ':contains(日 更新)').text().trim()
   const re = /[年月日() 更新]/
   const datepts = date.split(re).filter((x) => x.trim() != '').join('/')
-  let time: Date = new Date(datepts)
+  let baseTime: Date = new Date(datepts)
 
   for (let chapter of $(allChapters).toArray()) {
     const id = MG_DOMAIN1 + '/' + $('a',chapter).attr('href')
     const name = $(chapter).text()
     const chapNum = Number(id.split('=').pop()) ?? 0
-
+    let time: Date = new Date()
+    time.setDate(baseTime.getDate() - 7)
     chapters.push(createChapter({
       id,
       mangaId,
       name,
       langCode: LanguageCode.CHINEESE,
       chapNum,
-      time
+      time: time
     }))
-    time.setDate(time.getDate() - 7)
+    baseTime.setDate(baseTime.getDate() - 7)
   }
   return chapters
 }
