@@ -29,7 +29,7 @@ const headers1 = {
 }
 
 export const BaoziMangaInfo: SourceInfo = {
-	version: '0.5.0',
+	version: '0.5.1',
 	name: MG_NAME,
 	icon: 'icon.png',
 	author: 'Tiduesuse',
