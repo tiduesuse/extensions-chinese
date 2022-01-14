@@ -45,7 +45,7 @@ AxiosInst.get(url).then(
     const re = /[年月日() 更新]/
     const datepts = date.split(re).filter((x) => x.trim() != '').join('/')
     let dtime = new Date(datepts)
-    const dtime1 = new Date()
+    const dtime1 = new Date(dtime.getTime() - (7 * 24 * 3600000))
     dtime1.setDate(dtime.getDate() - 7)
     // const dtime1: Date = new Date().setDate(dtime.getDate() - 7)
     console.log(dtime)

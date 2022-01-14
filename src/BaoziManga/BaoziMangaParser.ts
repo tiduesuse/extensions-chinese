@@ -71,15 +71,14 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
     const id = MG_DOMAIN1 + '/' + $('a',chapter).attr('href')
     const name = $(chapter).text()
     const chapNum = Number(id.split('=').pop()) ?? 0
-    let time: Date = new Date()
-    time.setDate(baseTime.getDate() - 7)
+    const time: Date = new Date(baseTime.getTime() - (7 * 24 * 3600000))
     chapters.push(createChapter({
       id,
       mangaId,
       name,
       langCode: LanguageCode.CHINEESE,
       chapNum,
-      time: time
+      time
     }))
     baseTime.setDate(baseTime.getDate() - 7)
   }
