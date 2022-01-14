@@ -80,7 +80,7 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
       chapNum,
       time
     }))
-    time.setDate(time.getDate())
+    time.setDate(time.getDate() - 7)
   }
   return chapters
 }
