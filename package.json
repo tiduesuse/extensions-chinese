@@ -1,8 +1,9 @@
 {
   "name": "tiduesuse-extensions",
-  "version": "1.0.2",
+  "version": "0.5.0",
   "description": "Multiple Chinese sources for Paperback",
   "baseURL": "https://tiduesuse.github.io/extensions-chinese/dev",
+  "repositoryName": "Tiduesuse's Extensions",
   "scripts": {
     "test": "node_modules/.bin/mocha --timeout 300000 -r ts-node/register src/**/*.test.ts",
     "bundle": "paperback bundle",

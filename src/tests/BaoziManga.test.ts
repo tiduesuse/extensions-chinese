@@ -4,14 +4,14 @@ import {
     SearchRequest,
     Source
 } from 'paperback-extensions-common'
-import { ManHuaGui } from '../ManHuaGui/ManHuaGui'
+import { BaoziManga } from '../BaoziManga/BaoziManga'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 
-describe('ManHuaGui Tests', () => {
+describe('BaoziManga Tests', () => {
 
     const wrapper: APIWrapper = new APIWrapper()
-    const source: Source = new ManHuaGui(cheerio)
+    const source: Source = new BaoziManga(cheerio)
     const expect = chai.expect
     chai.use(chaiAsPromised)
 
@@ -20,7 +20,8 @@ describe('ManHuaGui Tests', () => {
      * Try to choose a manga which is updated frequently, so that the historical checking test can 
      * return proper results, as it is limited to searching 30 days back due to extremely long processing times otherwise.
      */
-    const mangaId = '7580'
+    // const mangaId = '7580'
+    const mangaId = 'hanghaiwang-weitianrongyilang'
 
     it('Retrieve Manga Details', async () => {
         const details = await wrapper.getMangaDetails(source, mangaId)
@@ -64,7 +65,7 @@ describe('ManHuaGui Tests', () => {
 
     it('Testing search', async () => {
         const testSearch: SearchRequest = {
-            title: 'solo',
+            title: 'one piece',
             parameters: {}
         }
 
