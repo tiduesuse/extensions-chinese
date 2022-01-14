@@ -189,15 +189,24 @@ export const parseTags = ($: CheerioStatic): TagSection[] => {
     type:   ['2', '類型'],
     filter: ['3', '字母']
   }
+  // create empty diction for tags
+  const tmpTags: { [key: string]: Tag[] } = {}
+  for (let key in dict) {
+    tmpTags[key] = []
+    // tagSections.push(createTagSection({id: dict[key][0], label: dict[key][1], tags: []}))
+  }
+  for (let key in tagDict) {
+    let cond_key = tagDict[key][1]
+    tmpTags[cond_key].push({ id: tagDict[key][0], label:key })
+  }
   // create tag sections
   const tagSections: TagSection[] = [] 
   for (let key in dict) {
-    tagSections.push(createTagSection({id: dict[key][0], label: dict[key][1], tags: []}))
-  }
-  // create tags
-  for (let key in tagDict) {
-    let idx = Number(dict[tagDict[key][1]][0])
-    tagSections[idx].tags.push(createTag({id: tagDict[key][0], label: key}))
+    tagSections.push(createTagSection({
+      id: dict[key][0],
+      label: dict[key][1],
+      tags: tmpTags[key].map(x => createTag(x))
+    }))
   }
   return tagSections
 }
