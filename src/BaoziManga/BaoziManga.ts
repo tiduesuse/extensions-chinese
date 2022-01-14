@@ -14,7 +14,16 @@ import {
   MangaTile} 
 from "paperback-extensions-common"
 
-import { parseMangaDetails, parseChapters, parseChapterDetails, parseSearch, parseHomeSections, parseTags, tagDict } from "./BaoziMangaParser"
+import { 
+  parseMangaDetails, 
+  parseChapters, 
+  parseChapterDetails, 
+  parseSearch, 
+  parseHomeSections, 
+  parseTags, 
+  parseMultiTags,
+  parseViewMore
+} from "./BaoziMangaParser"
 
 // const MG_DOMAIN = 'https://www.webmota.com'
 const MG_DOMAIN = 'https://www.baozimh.com'
@@ -61,7 +70,6 @@ export class BaoziManga extends Source {
 
   // manga details
 	async getMangaDetails(mangaId: string): Promise<Manga> {
-    console.log(`${MG_DOMAIN}/${mid_addr}/${mangaId}`)
     const request = createRequestObject({
       url: `${MG_DOMAIN}/${mid_addr}/${mangaId}`,
       method,
@@ -97,48 +105,50 @@ export class BaoziManga extends Source {
 	}
 
   async getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
-    const search = query.title?.replace(/ /g, '+').replace(/[’'´]/g, '%27') ?? ""
-    let manga: MangaTile[] = []
-
-    if (query.includedTags && query.includedTags?.length != 0) {
-      const label = query.includedTags[0].label
-      const id = query.includedTags[0].id
-      const cond = tagDict[label][1]
+    if (!metadata) {
+      const ori = query.title?.trim() ?? ""
+      const search = ori.replace(/ /g, '+').replace(/[’'´]/g, '%27') ?? ""
+      let addr = ''
+      if (search.length > 0) {
+        addr = `${MG_DOMAIN}/search?q=${search}`
+      } else if (query.includedTags && query.includedTags?.length != 0) {
+        const tagStr = parseMultiTags(query.includedTags)
+        addr = `${MG_DOMAIN}/classify?${tagStr}`
+      } else {
+        addr = `${MG_DOMAIN}/classify`
+      }
+      const addr1 = encodeURI(addr)
       const request = createRequestObject({
-          url: `${MG_DOMAIN}/classify?${cond}=${id}`,
+          url: addr1,
           method,
           headers
       })
       const response = await this.requestManager.schedule(request, 1)
       const $ = this.cheerio.load(response.data)
-      manga = parseSearch($)
-    } else {
-      const request = createRequestObject({
-          url: `${MG_DOMAIN}/search?q=${search}`,
-          method,
-          headers
-      })
-      const response = await this.requestManager.schedule(request, 1)
-      const $ = this.cheerio.load(response.data)
-      manga = parseSearch($)
+      metadata = {
+        manga: parseSearch($),
+        offset: 0
+      }
     }
-
     return createPagedResults({
-        results: manga,
-        metadata: undefined
+        results: metadata.manga.slice(metadata.offset, metadata.offset + 100),
+        metadata: {
+          manga: metadata.manga,
+          offset: metadata.offset + 100
+        }
     })    
   }
 
 	async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
-		const section1 = createHomeSection({ id: 'popular', title: '熱門漫畫'})
-		const section2 = createHomeSection({ id: 'recommended', title: '推薦漫畫'})
-		const section3 = createHomeSection({ id: 'korean', title: '韓漫漫畫'})
-		const section4 = createHomeSection({ id: 'kanji', title: '大女主漫畫'})
-		const section5 = createHomeSection({ id: 'shonen', title: '少年漫畫'})
-		const section6 = createHomeSection({ id: 'love', title: '戀愛漫畫'})
-		const section7 = createHomeSection({ id: 'xuanhuan', title: '玄幻漫畫'})
-		const section8 = createHomeSection({ id: 'new', title: '最新上架'})
-		const section9 = createHomeSection({ id: 'latest_updated', title: '最近更新'})
+		const section1 = createHomeSection({ id: '熱門漫畫', title: '熱門漫畫'})
+		const section2 = createHomeSection({ id: '推薦漫畫', title: '推薦漫畫'})
+		const section3 = createHomeSection({ id: '韓漫漫畫', title: '韓漫漫畫'})
+		const section4 = createHomeSection({ id: '大女主漫畫', title: '大女主漫畫'})
+		const section5 = createHomeSection({ id: '少年漫畫', title: '少年漫畫'})
+		const section6 = createHomeSection({ id: '戀愛漫畫', title: '戀愛漫畫'})
+		const section7 = createHomeSection({ id: '玄幻漫畫', title: '玄幻漫畫'})
+		const section8 = createHomeSection({ id: '最新上架', title: '最新上架'})
+		const section9 = createHomeSection({ id: '最近更新', title: '最近更新'})
 		const sections = [
       section1, 
       section2, 
@@ -169,4 +179,27 @@ export class BaoziManga extends Source {
     return parseTags($)
   }
 
+  async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
+    if (!metadata) {
+      const request = createRequestObject({
+        url: `${MG_DOMAIN}`,
+        method,
+        headers
+      })
+      const response = await this.requestManager.schedule(request, 1)
+      const $ = this.cheerio.load(response.data)
+      metadata = {
+        manga: parseViewMore($, homepageSectionId),
+        offset: 0
+      }
+    }
+
+    return createPagedResults({
+      results: metadata.manga.slice(metadata.offset, metadata.offset + 100),
+      metadata: {
+        manga: metadata.manga,
+        offset: metadata.offset + 100
+      }
+    })
+  }
 }

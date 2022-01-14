@@ -73,7 +73,7 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
       id,
       mangaId,
       name,
-      langCode: LanguageCode.CHINEESE,
+      langCode: LanguageCode.CHINEESE_HONGKONG,
       chapNum,
       time
     }))
@@ -111,6 +111,9 @@ const parseMangaItem = ($: CheerioStatic, item: CheerioElement): MangaTile => {
   id = id.split('/').pop() ?? ""
   const image: string = $('amp-img', item).attr('src') ?? ""
   const title = $('.comics-card__title', item).text()
+  console.log(id)
+  console.log(image)
+  console.log(title)
   return createMangaTile({
     id: id,
     image: image,
@@ -182,16 +185,24 @@ export const tagDict: { [key: string]: string[] } = {
   '0-9': ['0-9', 'filter']
 }
 
-export const parseTags = ($: CheerioStatic): TagSection[] => {
-  const dict: { [key: string]: string[] } = {
-    region: ['0', '地區'],
-    state:  ['1', '狀態'],
-    type:   ['2', '類型'],
+const typeDict : { [key: string]: string[] } = {
+    type:   ['0', '類型'],
+    region: ['1', '地區'],
+    state:  ['2', '狀態'],
     filter: ['3', '字母']
   }
+
+
+export const parseTags = ($: CheerioStatic): TagSection[] => {
+  // const dict: { [key: string]: string[] } = {
+  //   region: ['0', '地區'],
+  //   state:  ['1', '狀態'],
+  //   type:   ['2', '類型'],
+  //   filter: ['3', '字母']
+  // }
   // create empty diction for tags
   const tmpTags: { [key: string]: Tag[] } = {}
-  for (let key in dict) {
+  for (let key in typeDict) {
     tmpTags[key] = []
     // tagSections.push(createTagSection({id: dict[key][0], label: dict[key][1], tags: []}))
   }
@@ -201,14 +212,38 @@ export const parseTags = ($: CheerioStatic): TagSection[] => {
   }
   // create tag sections
   const tagSections: TagSection[] = [] 
-  for (let key in dict) {
+  for (let key in typeDict) {
     tagSections.push(createTagSection({
-      id: dict[key][0],
-      label: dict[key][1],
+      id: typeDict[key][0],
+      label: typeDict[key][1],
       tags: tmpTags[key].map(x => createTag(x))
     }))
   }
   return tagSections
 }
 
+export const parseMultiTags = (arrTag: Tag[]): string => {
+  // group by dict
+  const lastTags: { [key: string]: string } = {}
+  // always take the last tag
+  for (let tag of arrTag) {
+    let key = tagDict[tag.label][1]
+    lastTags[key] = tag.id
+  }
+  // make the search string
+  let search = ''
+  for (let key in lastTags) {
+    search += key + '=' + lastTags[key] + '&'
+  }
+  return search
+} 
+
+export const parseViewMore = ($: CheerioStatic, homepageSectionId: string): MangaTile[] => {
+  const env = $('.index-recommend-items:contains(' + homepageSectionId + ')')
+  const manga: MangaTile[] = []
+  for (const item of $('.comics-card', env).toArray()) {
+    manga.push(parseMangaItem($, item))
+  }
+  return manga
+}
 
