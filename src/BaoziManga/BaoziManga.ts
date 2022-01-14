@@ -40,7 +40,7 @@ const headers1 = {
 }
 
 export const BaoziMangaInfo: SourceInfo = {
-	version: '1.0.2',
+	version: '1.0.3',
 	name: MG_NAME,
 	icon: 'icon.jpg',
 	author: 'Tomas Way',
@@ -118,7 +118,7 @@ export class BaoziManga extends Source {
       const tagStr = parseMultiTags(query.includedTags)
       addr = `${MG_DOMAIN}/classify?${tagStr}`
     } else {
-      addr = `${MG_DOMAIN}/classify`
+      addr = `${MG_DOMAIN}/classify?`
     }
     let addr1 = `${addr}&page=${page}`
     addr1 = encodeURI(addr1)
@@ -194,11 +194,11 @@ export class BaoziManga extends Source {
     const response0 = await this.requestManager.schedule(request0, 1)
     const $0 = this.cheerio.load(response0.data)
     const env = $0('.index-recommend-items:contains(' + homepageSectionId + ')')
-    const addr = MG_DOMAIN + $0('.more', env).attr('href') ?? ''
+    const addr = $0('.more', env).attr('href') ?? ''
     let manga: MangaTile[] = []
     if (addr.length > 0) {
       const request = createRequestObject({
-        url: MG_DOMAIN + $0('.more', env).attr('href') + '&page=' + page,
+        url: MG_DOMAIN + $0('.more', env).attr('href') + '?&page=' + page,
         method,
         headers
       })
