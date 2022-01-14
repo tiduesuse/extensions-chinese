@@ -402,7 +402,7 @@ const headers1 = {
     'Host': 'www.webmota.com'
 };
 exports.BaoziMangaInfo = {
-    version: '0.5.0',
+    version: '0.5.1',
     name: MG_NAME,
     icon: 'icon.png',
     author: 'Tiduesuse',
@@ -717,15 +717,24 @@ exports.parseTags = ($) => {
         type: ['2', '類型'],
         filter: ['3', '字母']
     };
+    // create empty diction for tags
+    const tmpTags = {};
+    for (let key in dict) {
+        tmpTags[key] = [];
+        // tagSections.push(createTagSection({id: dict[key][0], label: dict[key][1], tags: []}))
+    }
+    for (let key in exports.tagDict) {
+        let cond_key = exports.tagDict[key][1];
+        tmpTags[cond_key].push({ id: exports.tagDict[key][0], label: key });
+    }
     // create tag sections
     const tagSections = [];
     for (let key in dict) {
-        tagSections.push(createTagSection({ id: dict[key][0], label: dict[key][1], tags: [] }));
-    }
-    // create tags
-    for (let key in exports.tagDict) {
-        let idx = Number(dict[exports.tagDict[key][1]][0]);
-        tagSections[idx].tags.push(createTag({ id: exports.tagDict[key][0], label: key }));
+        tagSections.push(createTagSection({
+            id: dict[key][0],
+            label: dict[key][1],
+            tags: tmpTags[key].map(x => createTag(x))
+        }));
     }
     return tagSections;
 };
