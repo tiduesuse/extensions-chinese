@@ -402,7 +402,7 @@ const headers1 = {
     'Host': 'www.webmota.com'
 };
 exports.BaoziMangaInfo = {
-    version: '0.9.2',
+    version: '0.9.3',
     name: MG_NAME,
     icon: 'icon.png',
     author: 'Tomas Way',
@@ -651,7 +651,7 @@ exports.parseChapters = ($, mangaId) => {
             chapNum,
             time
         }));
-        time.setDate(time.getDate());
+        time.setDate(time.getDate() - 7);
     }
     return chapters;
 };
