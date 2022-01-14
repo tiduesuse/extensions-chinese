@@ -402,7 +402,7 @@ const headers1 = {
     'Host': 'www.webmota.com'
 };
 exports.BaoziMangaInfo = {
-    version: '1.0.1',
+    version: '1.0.2',
     name: MG_NAME,
     icon: 'icon.jpg',
     author: 'Tomas Way',
@@ -552,8 +552,9 @@ class BaoziManga extends paperback_extensions_common_1.Source {
         });
     }
     getViewMoreItems(homepageSectionId, metadata) {
-        var _a;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
             const request0 = createRequestObject({
                 url: `${MG_DOMAIN}`,
                 method,
@@ -562,11 +563,11 @@ class BaoziManga extends paperback_extensions_common_1.Source {
             const response0 = yield this.requestManager.schedule(request0, 1);
             const $0 = this.cheerio.load(response0.data);
             const env = $0('.index-recommend-items:contains(' + homepageSectionId + ')');
-            const addr = (_a = MG_DOMAIN + $0('.more', env).attr('href')) !== null && _a !== void 0 ? _a : '';
+            const addr = (_b = MG_DOMAIN + $0('.more', env).attr('href')) !== null && _b !== void 0 ? _b : '';
             let manga = [];
             if (addr.length > 0) {
                 const request = createRequestObject({
-                    url: MG_DOMAIN + $0('.more', env).attr('href'),
+                    url: MG_DOMAIN + $0('.more', env).attr('href') + '&page=' + page,
                     method,
                     headers
                 });
@@ -581,7 +582,7 @@ class BaoziManga extends paperback_extensions_common_1.Source {
             }
             return createPagedResults({
                 results: manga,
-                metadata
+                metadata: { page: page + 1 }
             });
         });
     }
