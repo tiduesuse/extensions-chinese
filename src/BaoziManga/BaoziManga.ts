@@ -41,7 +41,7 @@ const headers1 = {
 }
 
 export const BaoziMangaInfo: SourceInfo = {
-	version: '0.6.1',
+	version: '0.9.1',
 	name: MG_NAME,
 	icon: 'icon.png',
 	author: 'Tomas Way',
