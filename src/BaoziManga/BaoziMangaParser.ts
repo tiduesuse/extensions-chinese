@@ -110,7 +110,7 @@ export const parseSearch = ($: CheerioStatic): MangaTile[] => {
 }
 
 // parse each mange item
-const parseMangaItem = ($: CheerioStatic, item: CheerioElement): MangaTile => {
+export const parseMangaItem = ($: CheerioStatic, item: CheerioElement): MangaTile => {
   let id: string = $('.comics-card__poster', item).attr('href') ?? ""
   id = id.split('/').pop() ?? ""
   const image: string = $('amp-img', item).attr('src') ?? ""
