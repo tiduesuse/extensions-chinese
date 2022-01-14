@@ -402,7 +402,7 @@ const headers1 = {
     'Host': 'www.webmota.com'
 };
 exports.BaoziMangaInfo = {
-    version: '0.9.7',
+    version: '1.0.0',
     name: MG_NAME,
     icon: 'icon.png',
     author: 'Tomas Way',
