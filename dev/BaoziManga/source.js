@@ -402,7 +402,7 @@ const headers1 = {
     'Host': 'www.webmota.com'
 };
 exports.BaoziMangaInfo = {
-    version: '0.6.0',
+    version: '0.6.1',
     name: MG_NAME,
     icon: 'icon.png',
     author: 'Tomas Way',
@@ -472,39 +472,40 @@ class BaoziManga extends paperback_extensions_common_1.Source {
     getSearchResults(query, metadata) {
         var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
-            if (!metadata.manga) {
-                const ori = (_b = (_a = query.title) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : "";
-                const search = (_c = ori.replace(/ /g, '+').replace(/[’'´]/g, '%27')) !== null && _c !== void 0 ? _c : "";
-                let addr = '';
-                if (search.length > 0) {
-                    addr = `${MG_DOMAIN}/search?q=${search}`;
-                }
-                else if (query.includedTags && ((_d = query.includedTags) === null || _d === void 0 ? void 0 : _d.length) != 0) {
-                    const tagStr = BaoziMangaParser_1.parseMultiTags(query.includedTags);
-                    addr = `${MG_DOMAIN}/classify?${tagStr}`;
-                }
-                else {
-                    addr = `${MG_DOMAIN}/classify`;
-                }
-                const addr1 = encodeURI(addr);
-                const request = createRequestObject({
-                    url: addr1,
-                    method,
-                    headers
-                });
-                const response = yield this.requestManager.schedule(request, 1);
-                const $ = this.cheerio.load(response.data);
-                metadata = {
-                    manga: BaoziMangaParser_1.parseSearch($),
-                    offset: 0
-                };
+            // if (!metadata.manga) {
+            const ori = (_b = (_a = query.title) === null || _a === void 0 ? void 0 : _a.trim()) !== null && _b !== void 0 ? _b : "";
+            const search = (_c = ori.replace(/ /g, '+').replace(/[’'´]/g, '%27')) !== null && _c !== void 0 ? _c : "";
+            let addr = '';
+            if (search.length > 0) {
+                addr = `${MG_DOMAIN}/search?q=${search}`;
             }
+            else if (query.includedTags && ((_d = query.includedTags) === null || _d === void 0 ? void 0 : _d.length) != 0) {
+                const tagStr = BaoziMangaParser_1.parseMultiTags(query.includedTags);
+                addr = `${MG_DOMAIN}/classify?${tagStr}`;
+            }
+            else {
+                addr = `${MG_DOMAIN}/classify`;
+            }
+            const addr1 = encodeURI(addr);
+            const request = createRequestObject({
+                url: addr1,
+                method,
+                headers
+            });
+            const response = yield this.requestManager.schedule(request, 1);
+            const $ = this.cheerio.load(response.data);
+            // metadata = {
+            //   manga: parseSearch($),
+            //   offset: 0
+            // }
+            // }
             return createPagedResults({
-                results: metadata.manga.slice(metadata.offset, metadata.offset + 100),
-                metadata: {
-                    manga: metadata.manga,
-                    offset: metadata.offset + 100
-                }
+                results: BaoziMangaParser_1.parseSearch($),
+                metadata
+                // metadata: {
+                //   manga: metadata.manga,
+                //   offset: metadata.offset + 100
+                // }
             });
         });
     }
@@ -550,25 +551,22 @@ class BaoziManga extends paperback_extensions_common_1.Source {
     }
     getViewMoreItems(homepageSectionId, metadata) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!metadata.manga) {
-                const request = createRequestObject({
-                    url: `${MG_DOMAIN}`,
-                    method,
-                    headers
-                });
-                const response = yield this.requestManager.schedule(request, 1);
-                const $ = this.cheerio.load(response.data);
-                metadata = {
-                    manga: BaoziMangaParser_1.parseViewMore($, homepageSectionId),
-                    offset: 0
-                };
-            }
+            // if (!metadata.manga) {
+            const request = createRequestObject({
+                url: `${MG_DOMAIN}`,
+                method,
+                headers
+            });
+            const response = yield this.requestManager.schedule(request, 1);
+            const $ = this.cheerio.load(response.data);
+            // metadata = {
+            //   manga: parseViewMore($, homepageSectionId),
+            //   offset: 0
+            // }
+            // }
             return createPagedResults({
-                results: metadata.manga.slice(metadata.offset, metadata.offset + 100),
-                metadata: {
-                    manga: metadata.manga,
-                    offset: metadata.offset + 100
-                }
+                results: BaoziMangaParser_1.parseViewMore($, homepageSectionId),
+                metadata
             });
         });
     }
