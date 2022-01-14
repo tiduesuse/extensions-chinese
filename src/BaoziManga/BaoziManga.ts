@@ -40,7 +40,7 @@ const headers1 = {
 }
 
 export const BaoziMangaInfo: SourceInfo = {
-	version: '1.0.1',
+	version: '1.0.2',
 	name: MG_NAME,
 	icon: 'icon.jpg',
 	author: 'Tomas Way',
@@ -185,6 +185,7 @@ export class BaoziManga extends Source {
   }
 
   async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
+    const page: number = metadata?.page ?? 1
     const request0 = createRequestObject({
       url: `${MG_DOMAIN}`,
       method,
@@ -197,7 +198,7 @@ export class BaoziManga extends Source {
     let manga: MangaTile[] = []
     if (addr.length > 0) {
       const request = createRequestObject({
-        url: MG_DOMAIN + $0('.more', env).attr('href'),
+        url: MG_DOMAIN + $0('.more', env).attr('href') + '&page=' + page,
         method,
         headers
       })
@@ -212,7 +213,7 @@ export class BaoziManga extends Source {
 
     return createPagedResults({
       results: manga,
-      metadata
+      metadata: { page: page + 1 }
     })
   }
 }
